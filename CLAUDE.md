@@ -22,7 +22,7 @@ Source of truth for all code generation in this project.
 - Prefer `type` + unions over enums. Use `as const` for constants and lookup maps:
 
   ```ts
-  export const statusOptions = ['active', 'inactive'] as const;
+  export const statusOptions = ["active", "inactive"] as const;
   export type Status = (typeof statusOptions)[number];
   ```
 
@@ -112,10 +112,10 @@ src/test/
 
 ### Error Handling
 
-| Situation | Exception |
-|---|---|
-| Resource not found | `NotFoundException` |
-| Business rule violated | `BadRequestException` |
+| Situation                                  | Exception             |
+| ------------------------------------------ | --------------------- |
+| Resource not found                         | `NotFoundException`   |
+| Business rule violated                     | `BadRequestException` |
 | Invalid input that bypasses DTO validation | `BadRequestException` |
 
 Error messages include context — what was expected, what was found.
@@ -124,7 +124,13 @@ If need to use `BadRequestException` make sure there is no gap in the dto defeni
 ### Global Setup
 
 ```ts
-app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+app.useGlobalPipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }),
+);
 ```
 
 Apply the same `ValidationPipe` configuration in controller integration tests.
@@ -177,3 +183,5 @@ Log meaningful prompts in `/prompts/backend.md`, `/prompts/frontend.md`, or `/pr
 Log when a prompt: generates real code that is meaningful, changes architecture, introduces endpoints/components/services, or modifies schema/infrastructure.
 
 Do not log: clarifications, small fixes, debugging back-and-forth.
+
+Use the format: YYYY-MM-DD HH:mm - Description for every logged prompt entry. A prompt headline will start with the date the time a dash and title of the prompt (e.g: `## 2026-06-15 14:46 - Example prompt`).
