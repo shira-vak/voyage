@@ -3,7 +3,7 @@ import type { TripResponseDto } from './dtos/trip-response.dto';
 
 export function toTripResponseDto(trip: Trip): TripResponseDto {
   return {
-    id: trip.id,
+    tripId: trip.id,
     vehicleId: trip.vehicleId,
     startedAt: trip.startedAt,
     endedAt: trip.endedAt,

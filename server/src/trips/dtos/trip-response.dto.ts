@@ -3,7 +3,7 @@ import { CreateTripDto } from './create-trip.dto';
 
 export class TripResponseDto extends CreateTripDto {
   @ApiProperty()
-  id: string;
+  tripId: string;
 
   @ApiProperty()
   vehicleId: string;

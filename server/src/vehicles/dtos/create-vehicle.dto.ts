@@ -3,10 +3,10 @@ import { IsString } from 'class-validator';
 
 export class CreateVehicleDto {
   @IsString()
-  @ApiProperty({ description: 'Display name for the vehicle', example: 'Berlin Express' })
+  @ApiProperty({ description: 'Display name for the vehicle', example: 'Israel Express' })
   name: string;
 
   @IsString()
-  @ApiProperty({ description: 'Unique licence plate number', example: 'B-EX-001' })
+  @ApiProperty({ description: 'Unique licence plate number', example: 'IL-EX-001' })
   licensePlate: string;
 }

@@ -52,7 +52,7 @@ describe('TripsService', () => {
           }),
         }),
       );
-      expect(result.id).toBe(MOCK_TRIP_ID);
+      expect(result.tripId).toBe(MOCK_TRIP_ID);
       expect(result.distanceKm).toBe(MOCK_TRIP_DISTANCE_KM);
       expect(result.fuelConsumed).toBe(MOCK_TRIP_FUEL_CONSUMED);
     });

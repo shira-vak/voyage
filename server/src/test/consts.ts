@@ -38,7 +38,7 @@ export const MOCK_TRIP = {
 };
 
 export const MOCK_TRIP_RESPONSE: TripResponseDto = {
-  id: MOCK_TRIP_ID,
+  tripId: MOCK_TRIP_ID,
   vehicleId: MOCK_VEHICLE_ID,
   startedAt: MOCK_TRIP_START,
   endedAt: MOCK_TRIP_END,
