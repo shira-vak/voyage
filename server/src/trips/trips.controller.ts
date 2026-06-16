@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiParam } from '@nestjs/swagger';
 import { Trip } from '@prisma/client';
-import type { PaginatedResult } from '../common/types';
+import type { PaginatedResult } from './types';
 import { CreateTripDto } from './dtos/create-trip.dto';
 import { ListTripsQueryDto } from './dtos/list-trips-query.dto';
 import { VehicleIdDto } from './dtos/vehicle-id.dto';

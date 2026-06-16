@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma, Trip } from '@prisma/client';
-import type { PaginatedResult } from '../common/types';
+import type { PaginatedResult } from './types';
 import { PrismaService } from '../prisma/prisma.service';
 import { VehiclesService } from '../vehicles/vehicles.service';
 import { CreateTripDto } from './dtos/create-trip.dto';

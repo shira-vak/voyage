@@ -184,4 +184,4 @@ Log when a prompt: generates real code that is meaningful, changes architecture,
 
 Do not log: clarifications, small fixes, debugging back-and-forth.
 
-Use the format: YYYY-MM-DD HH:mm - Description for every logged prompt entry. A prompt headline will start with the date the time a dash and title of the prompt (e.g: `## 2026-06-15 14:46 - Example prompt`).
+Use the format: `YYYY-MM-DD HH:mm` - Description for every logged prompt entry. A prompt headline will start with the date the time a dash and title of the prompt (e.g: `## 2026-06-15 14:46 - Example prompt`).

@@ -5,7 +5,7 @@ import { TripsModule } from './trips/trips.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), PrismaModule, VehiclesModule, TripsModule],
+  imports: [ConfigModule.forRoot({ expandVariables: true }), PrismaModule, VehiclesModule, TripsModule],
   controllers: [],
   providers: [],
 })
