@@ -1,14 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CreateVehicleDto } from './create-vehicle.dto';
 
-export class VehicleResponseDto {
+export class VehicleResponseDto extends CreateVehicleDto {
   @ApiProperty()
   id: string;
-
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  licensePlate: string;
 
   @ApiProperty()
   createdAt: Date;

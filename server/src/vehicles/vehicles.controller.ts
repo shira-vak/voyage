@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { CreateVehicleDto } from './dtos/create-vehicle.dto';
 import { VehicleIdDto } from './dtos/vehicle-id.dto';
 import { VehicleResponseDto } from './dtos/vehicle-response.dto';
@@ -12,12 +12,14 @@ export class VehiclesController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new vehicle' })
+  @ApiCreatedResponse({ type: VehicleResponseDto })
   async createVehicle(@Body() body: CreateVehicleDto): Promise<VehicleResponseDto> {
     return this.vehiclesService.createVehicle(body);
   }
 
   @Get()
   @ApiOperation({ summary: 'List all vehicles' })
+  @ApiOkResponse({ type: [VehicleResponseDto] })
   async listVehicles(): Promise<VehicleResponseDto[]> {
     return this.vehiclesService.listVehicles();
   }
@@ -25,6 +27,7 @@ export class VehiclesController {
   @Get(':vehicleId/summary')
   @ApiOperation({ summary: 'Get aggregated trip summary for a vehicle' })
   @ApiParam({ name: 'vehicleId' })
+  @ApiOkResponse({ type: VehicleSummaryDto })
   async getVehicleSummary(@Param() params: VehicleIdDto): Promise<VehicleSummaryDto> {
     return this.vehiclesService.getVehicleSummary(params.vehicleId);
   }

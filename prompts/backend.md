@@ -48,3 +48,39 @@ Prompt:
 the dtos have alot in common - make the things that can be common between them seperated and use it OR if its possible use one inside another - pass over the whole app
 
 ---
+
+## 2026-06-16 13:30 - Fix Swagger schemas, trip response shape, date serialisation
+
+Tool: Claude Sonnet 4.6
+
+Prompt:
+in rest i only see the CreateVehicleDto and CreateTripDto under the schema - something is wrong. also the trip response had both id and vehicleId — trip id is not relevant. also all the date values saved are empty dicts. fix all.
+
+Changes:
+
+1. Fixed DecimalTransformInterceptor: added `if (value instanceof Date) return value` before the generic object branch — Date has no enumerable own properties so `Object.fromEntries(Object.entries(date))` returned `{}`.
+2. Removed `id` field from TripResponseDto and toTripResponseDto mapping in trips/utils.ts.
+3. Added `@ApiCreatedResponse` / `@ApiOkResponse` decorators to all controller endpoints in vehicles.controller.ts and trips.controller.ts so Swagger shows response schemas.
+4. Added Swagger CLI plugin to nest-cli.json for auto-detection of response types.
+5. All 46 tests pass.
+
+---
+
+## 2026-06-16 14:22 - Refactor DTOs to eliminate duplication via inheritance
+
+Tool: Claude Sonnet 4.6
+
+Prompt:
+Remove duplicated field definitions across DTOs. eg TripResponseDto and CreateTripDto have stuff in common just like they also have stuff in common with vehicles. make the dtos more generic so they could extend one another to avoid duplications.. also trip should also include tripId i think. so in the front it will have a special identifier. and the trip response can look cleaner since it contain the create-trip dto. make sure its correct and clean all across the app backend and still solve the main app usage like expected
+
+Changes:
+
+1. `VehicleResponseDto extends CreateVehicleDto` — adds `id` and `createdAt`; `name` and `licensePlate` are inherited.
+2. `CreateTripDto` date fields changed from `string` + `@IsDateString()` to `Date` + `@Type(() => Date) @IsDate()` (same pattern as `ListTripsQueryDto`) so that the DTO type is compatible with the response.
+3. `TripResponseDto extends CreateTripDto` — adds `id`, `vehicleId`, `durationMinutes`, `createdAt`; `startedAt`, `endedAt`, `distanceKm`, `fuelConsumed` are inherited.
+4. `id` added back to `TripResponseDto` and `toTripResponseDto` so the frontend has a stable identifier per trip.
+5. `trips.service.ts` simplified — `dto.startedAt`/`dto.endedAt` are now `Date` directly, removing the `new Date()` conversion calls.
+6. Test consts updated: `MOCK_CREATE_TRIP_DTO` uses `Date` values; `MOCK_TRIP_RESPONSE` includes `id` again.
+7. All 46 tests pass, TypeScript clean.
+
+---

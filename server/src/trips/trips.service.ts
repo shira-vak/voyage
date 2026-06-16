@@ -18,8 +18,7 @@ export class TripsService {
   async createTrip(vehicleId: string, dto: CreateTripDto): Promise<TripResponseDto> {
     await this.vehiclesService.getVehicleById(vehicleId);
 
-    const startedAt = new Date(dto.startedAt);
-    const endedAt = new Date(dto.endedAt);
+    const { startedAt, endedAt } = dto;
 
     if (startedAt >= endedAt) {
       throw new BadRequestException('startedAt must be before endedAt');

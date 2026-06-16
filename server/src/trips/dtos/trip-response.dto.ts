@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CreateTripDto } from './create-trip.dto';
 
-export class TripResponseDto {
+export class TripResponseDto extends CreateTripDto {
   @ApiProperty()
   id: string;
 
@@ -8,19 +9,7 @@ export class TripResponseDto {
   vehicleId: string;
 
   @ApiProperty()
-  startedAt: Date;
-
-  @ApiProperty()
-  endedAt: Date;
-
-  @ApiProperty()
   durationMinutes: number;
-
-  @ApiProperty()
-  distanceKm: number;
-
-  @ApiProperty()
-  fuelConsumed: number;
 
   @ApiProperty()
   createdAt: Date;

@@ -1,14 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNumber, IsPositive } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsNumber, IsPositive } from 'class-validator';
 
 export class CreateTripDto {
-  @IsDateString()
+  @Type(() => Date)
+  @IsDate()
   @ApiProperty({ description: 'Trip start time (ISO 8601)', example: '2024-06-01T08:00:00Z' })
-  startedAt: string;
+  startedAt: Date;
 
-  @IsDateString()
+  @Type(() => Date)
+  @IsDate()
   @ApiProperty({ description: 'Trip end time (ISO 8601)', example: '2024-06-01T09:30:00Z' })
-  endedAt: string;
+  endedAt: Date;
 
   @IsNumber()
   @IsPositive()

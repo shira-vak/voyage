@@ -69,8 +69,8 @@ describe('TripsService', () => {
       await expect(
         service.createTrip(MOCK_VEHICLE_ID, {
           ...MOCK_CREATE_TRIP_DTO,
-          startedAt: MOCK_TRIP_START.toISOString(),
-          endedAt: MOCK_TRIP_START.toISOString(),
+          startedAt: MOCK_TRIP_START,
+          endedAt: MOCK_TRIP_START,
         }),
       ).rejects.toThrow(BadRequestException);
     });
@@ -81,8 +81,8 @@ describe('TripsService', () => {
       await expect(
         service.createTrip(MOCK_VEHICLE_ID, {
           ...MOCK_CREATE_TRIP_DTO,
-          startedAt: MOCK_TRIP_END.toISOString(),
-          endedAt: MOCK_TRIP_START.toISOString(),
+          startedAt: MOCK_TRIP_END,
+          endedAt: MOCK_TRIP_START,
         }),
       ).rejects.toThrow(BadRequestException);
     });
