@@ -2,20 +2,14 @@ import { INestApplication, NotFoundException, ValidationPipe } from '@nestjs/com
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { DecimalTransformInterceptor } from '../../common/decimal-transform.interceptor';
-import { INVALID_UUID, MOCK_TRIP_RESPONSE, MOCK_VEHICLE_ID } from '../../test/consts';
+import { INVALID_UUID, MOCK_TRIP_DISTANCE_KM, MOCK_TRIP_RESPONSE, MOCK_VEHICLE_ID } from '../../test/consts';
 import { TripsController } from '../trips.controller';
 import { TripsService } from '../trips.service';
+import { MOCK_CREATE_TRIP_DTO } from './consts';
 
 const serviceMock = {
   createTrip: jest.fn(),
   listTrips: jest.fn(),
-};
-
-const validTripBody = {
-  startedAt: '2024-06-01T08:00:00Z',
-  endedAt: '2024-06-01T09:30:00Z',
-  distanceKm: 145.5,
-  fuelConsumed: 18.3,
 };
 
 describe('TripsController', () => {
@@ -42,30 +36,47 @@ describe('TripsController', () => {
 
       const res = await request(app.getHttpServer())
         .post(`/vehicles/${MOCK_VEHICLE_ID}/trips`)
-        .send(validTripBody)
+        .send(MOCK_CREATE_TRIP_DTO)
         .expect(201);
 
       expect(res.body.vehicleId).toBe(MOCK_VEHICLE_ID);
-      expect(res.body.distanceKm).toBe(145.5);
+      expect(res.body.distanceKm).toBe(MOCK_TRIP_DISTANCE_KM);
     });
 
     it('when vehicle does not exist should return 404', async () => {
       serviceMock.createTrip.mockRejectedValue(new NotFoundException());
 
-      await request(app.getHttpServer()).post(`/vehicles/${MOCK_VEHICLE_ID}/trips`).send(validTripBody).expect(404);
+      await request(app.getHttpServer())
+        .post(`/vehicles/${MOCK_VEHICLE_ID}/trips`)
+        .send(MOCK_CREATE_TRIP_DTO)
+        .expect(404);
     });
 
     it('when vehicleId is not a valid UUID should return 400', async () => {
-      await request(app.getHttpServer()).post(`/vehicles/${INVALID_UUID}/trips`).send(validTripBody).expect(400);
+      await request(app.getHttpServer()).post(`/vehicles/${INVALID_UUID}/trips`).send(MOCK_CREATE_TRIP_DTO).expect(400);
     });
 
     it.each([
-      ['startedAt is missing', { endedAt: '2024-06-01T09:30:00Z', distanceKm: 145.5, fuelConsumed: 18.3 }],
-      ['endedAt is missing', { startedAt: '2024-06-01T08:00:00Z', distanceKm: 145.5, fuelConsumed: 18.3 }],
-      ['distanceKm is zero', { ...validTripBody, distanceKm: 0 }],
-      ['fuelConsumed is negative', { ...validTripBody, fuelConsumed: -5 }],
-      ['startedAt is not a date string', { ...validTripBody, startedAt: 'not-a-date' }],
-      ['an unknown field is sent', { ...validTripBody, extra: 'x' }],
+      [
+        'startedAt is missing',
+        {
+          endedAt: MOCK_CREATE_TRIP_DTO.endedAt,
+          distanceKm: MOCK_TRIP_DISTANCE_KM,
+          fuelConsumed: MOCK_TRIP_RESPONSE.fuelConsumed,
+        },
+      ],
+      [
+        'endedAt is missing',
+        {
+          startedAt: MOCK_CREATE_TRIP_DTO.startedAt,
+          distanceKm: MOCK_TRIP_DISTANCE_KM,
+          fuelConsumed: MOCK_TRIP_RESPONSE.fuelConsumed,
+        },
+      ],
+      ['distanceKm is zero', { ...MOCK_CREATE_TRIP_DTO, distanceKm: 0 }],
+      ['fuelConsumed is negative', { ...MOCK_CREATE_TRIP_DTO, fuelConsumed: -5 }],
+      ['startedAt is not a date string', { ...MOCK_CREATE_TRIP_DTO, startedAt: 'not-a-date' }],
+      ['an unknown field is sent', { ...MOCK_CREATE_TRIP_DTO, extra: 'x' }],
     ])('when %s should return 400', async (_label, body) => {
       await request(app.getHttpServer()).post(`/vehicles/${MOCK_VEHICLE_ID}/trips`).send(body).expect(400);
     });
@@ -73,13 +84,16 @@ describe('TripsController', () => {
 
   describe('GET /trips', () => {
     it('when no filters are applied should return 200 with paginated result', async () => {
-      serviceMock.listTrips.mockResolvedValue({ data: [MOCK_TRIP_RESPONSE], total: 1, page: 1, limit: 20 });
+      const total = 1;
+      const page = 1;
+      const limit = 20;
+      serviceMock.listTrips.mockResolvedValue({ data: [MOCK_TRIP_RESPONSE], total, page, limit });
 
       const res = await request(app.getHttpServer()).get('/trips').expect(200);
 
       expect(res.body.data).toHaveLength(1);
-      expect(res.body.total).toBe(1);
-      expect(res.body.page).toBe(1);
+      expect(res.body.total).toBe(total);
+      expect(res.body.page).toBe(page);
     });
 
     it('when vehicleId filter is applied should return 200', async () => {

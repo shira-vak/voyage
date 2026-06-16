@@ -1,9 +1,21 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { PrismaService } from '../../prisma/prisma.service';
-import { MOCK_TRIP, MOCK_VEHICLE, MOCK_VEHICLE_ID, prismaMock } from '../../test/consts';
+import {
+  MOCK_TRIP,
+  MOCK_TRIP_DISTANCE_KM,
+  MOCK_TRIP_DURATION_MINUTES,
+  MOCK_TRIP_END,
+  MOCK_TRIP_FUEL_CONSUMED,
+  MOCK_TRIP_ID,
+  MOCK_TRIP_START,
+  MOCK_VEHICLE,
+  MOCK_VEHICLE_ID,
+  prismaMock,
+} from '../../test/consts';
 import { VehiclesService } from '../../vehicles/vehicles.service';
 import { TripsService } from '../trips.service';
+import { MOCK_CREATE_TRIP_DTO } from './consts';
 
 const vehiclesServiceMock = {
   getVehicleById: jest.fn(),
@@ -26,34 +38,29 @@ describe('TripsService', () => {
   });
 
   describe('createTrip', () => {
-    const validDto = {
-      startedAt: '2024-06-01T08:00:00Z',
-      endedAt: '2024-06-01T09:30:00Z',
-      distanceKm: 145.5,
-      fuelConsumed: 18.3,
-    };
-
     it('when vehicle exists and data is valid should create and return the trip', async () => {
       vehiclesServiceMock.getVehicleById.mockResolvedValue(MOCK_VEHICLE);
       prismaMock.trip.create.mockResolvedValue(MOCK_TRIP);
 
-      const result = await service.createTrip(MOCK_VEHICLE_ID, validDto);
+      const result = await service.createTrip(MOCK_VEHICLE_ID, MOCK_CREATE_TRIP_DTO);
 
       expect(prismaMock.trip.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
             vehicleId: MOCK_VEHICLE_ID,
-            durationMinutes: 90,
+            durationMinutes: MOCK_TRIP_DURATION_MINUTES,
           }),
         }),
       );
-      expect(result.id).toBe(MOCK_TRIP.id);
+      expect(result.id).toBe(MOCK_TRIP_ID);
+      expect(result.distanceKm).toBe(MOCK_TRIP_DISTANCE_KM);
+      expect(result.fuelConsumed).toBe(MOCK_TRIP_FUEL_CONSUMED);
     });
 
     it('when vehicle does not exist should throw NotFoundException', async () => {
       vehiclesServiceMock.getVehicleById.mockRejectedValue(new NotFoundException());
 
-      await expect(service.createTrip(MOCK_VEHICLE_ID, validDto)).rejects.toThrow(NotFoundException);
+      await expect(service.createTrip(MOCK_VEHICLE_ID, MOCK_CREATE_TRIP_DTO)).rejects.toThrow(NotFoundException);
     });
 
     it('when startedAt is equal to endedAt should throw BadRequestException', async () => {
@@ -61,9 +68,9 @@ describe('TripsService', () => {
 
       await expect(
         service.createTrip(MOCK_VEHICLE_ID, {
-          ...validDto,
-          startedAt: '2024-06-01T08:00:00Z',
-          endedAt: '2024-06-01T08:00:00Z',
+          ...MOCK_CREATE_TRIP_DTO,
+          startedAt: MOCK_TRIP_START.toISOString(),
+          endedAt: MOCK_TRIP_START.toISOString(),
         }),
       ).rejects.toThrow(BadRequestException);
     });
@@ -73,32 +80,29 @@ describe('TripsService', () => {
 
       await expect(
         service.createTrip(MOCK_VEHICLE_ID, {
-          ...validDto,
-          startedAt: '2024-06-01T10:00:00Z',
-          endedAt: '2024-06-01T08:00:00Z',
+          ...MOCK_CREATE_TRIP_DTO,
+          startedAt: MOCK_TRIP_END.toISOString(),
+          endedAt: MOCK_TRIP_START.toISOString(),
         }),
       ).rejects.toThrow(BadRequestException);
     });
 
-    it('should compute durationMinutes correctly', async () => {
+    it('should compute durationMinutes correctly and map Decimals to numbers', async () => {
       vehiclesServiceMock.getVehicleById.mockResolvedValue(MOCK_VEHICLE);
       prismaMock.trip.create.mockResolvedValue(MOCK_TRIP);
 
-      await service.createTrip(MOCK_VEHICLE_ID, {
-        startedAt: '2024-06-01T08:00:00Z',
-        endedAt: '2024-06-01T09:30:00Z',
-        distanceKm: 100,
-        fuelConsumed: 10,
-      });
+      const result = await service.createTrip(MOCK_VEHICLE_ID, MOCK_CREATE_TRIP_DTO);
 
       expect(prismaMock.trip.create).toHaveBeenCalledWith(
-        expect.objectContaining({ data: expect.objectContaining({ durationMinutes: 90 }) }),
+        expect.objectContaining({ data: expect.objectContaining({ durationMinutes: MOCK_TRIP_DURATION_MINUTES }) }),
       );
+      expect(typeof result.distanceKm).toBe('number');
+      expect(typeof result.fuelConsumed).toBe('number');
     });
   });
 
   describe('listTrips', () => {
-    it('when no filters are applied should return all trips paginated', async () => {
+    it('when no filters are applied should return all trips paginated with defaults', async () => {
       prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
       prismaMock.trip.count.mockResolvedValue(1);
 
@@ -125,27 +129,30 @@ describe('TripsService', () => {
       prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
       prismaMock.trip.count.mockResolvedValue(1);
 
-      const startDate = new Date('2024-01-01');
-      const endDate = new Date('2024-12-31');
-
-      await service.listTrips({ startDate, endDate });
+      await service.listTrips({ startDate: MOCK_TRIP_START, endDate: MOCK_TRIP_END });
 
       expect(prismaMock.trip.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({ startedAt: { gte: startDate, lte: endDate } }),
+          where: expect.objectContaining({ startedAt: { gte: MOCK_TRIP_START, lte: MOCK_TRIP_END } }),
         }),
       );
     });
 
     it('when custom pagination is applied should use page and limit', async () => {
+      const page = 2;
+      const limit = 10;
+      const total = 50;
       prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
-      prismaMock.trip.count.mockResolvedValue(50);
+      prismaMock.trip.count.mockResolvedValue(total);
 
-      const result = await service.listTrips({ page: 2, limit: 10 });
+      const result = await service.listTrips({ page, limit });
 
-      expect(prismaMock.trip.findMany).toHaveBeenCalledWith(expect.objectContaining({ skip: 10, take: 10 }));
-      expect(result.page).toBe(2);
-      expect(result.limit).toBe(10);
+      expect(prismaMock.trip.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: (page - 1) * limit, take: limit }),
+      );
+      expect(result.page).toBe(page);
+      expect(result.limit).toBe(limit);
+      expect(result.total).toBe(total);
     });
 
     it('when no trips match should return empty data with total zero', async () => {
@@ -156,6 +163,17 @@ describe('TripsService', () => {
 
       expect(result.data).toEqual([]);
       expect(result.total).toBe(0);
+    });
+
+    it('should map Decimal fields to numbers in returned trips', async () => {
+      prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
+      prismaMock.trip.count.mockResolvedValue(1);
+
+      const result = await service.listTrips({});
+
+      expect(result.data[0].distanceKm).toBe(MOCK_TRIP_DISTANCE_KM);
+      expect(result.data[0].fuelConsumed).toBe(MOCK_TRIP_FUEL_CONSUMED);
+      expect(typeof result.data[0].distanceKm).toBe('number');
     });
   });
 });

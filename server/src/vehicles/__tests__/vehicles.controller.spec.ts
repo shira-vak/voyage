@@ -1,11 +1,11 @@
 import { INestApplication, NotFoundException, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { VehicleType } from '@prisma/client';
 import request from 'supertest';
 import { DecimalTransformInterceptor } from '../../common/decimal-transform.interceptor';
-import { INVALID_UUID, MOCK_VEHICLE_ID, MOCK_VEHICLE_RESPONSE, MOCK_VEHICLE_SUMMARY } from '../../test/consts';
+import { INVALID_UUID, MOCK_VEHICLE, MOCK_VEHICLE_ID, MOCK_VEHICLE_SUMMARY } from '../../test/consts';
 import { VehiclesController } from '../vehicles.controller';
 import { VehiclesService } from '../vehicles.service';
+import { MOCK_CREATE_VEHICLE_DTO } from './consts';
 
 const serviceMock = {
   createVehicle: jest.fn(),
@@ -34,24 +34,17 @@ describe('VehiclesController', () => {
 
   describe('POST /vehicles', () => {
     it('when data is valid should return 201 with the created vehicle', async () => {
-      serviceMock.createVehicle.mockResolvedValue(MOCK_VEHICLE_RESPONSE);
+      serviceMock.createVehicle.mockResolvedValue(MOCK_VEHICLE);
 
-      const res = await request(app.getHttpServer())
-        .post('/vehicles')
-        .send({ name: 'Test Vehicle', licensePlate: 'B-EX-001', type: VehicleType.TRUCK })
-        .expect(201);
+      const res = await request(app.getHttpServer()).post('/vehicles').send(MOCK_CREATE_VEHICLE_DTO).expect(201);
 
       expect(res.body.id).toBe(MOCK_VEHICLE_ID);
     });
 
     it.each([
-      ['name is missing', { licensePlate: 'B-EX-001', type: VehicleType.TRUCK }],
-      ['licensePlate is missing', { name: 'Test Vehicle', type: VehicleType.TRUCK }],
-      ['type is invalid', { name: 'Test Vehicle', licensePlate: 'B-EX-001', type: 'BICYCLE' }],
-      [
-        'an unknown field is sent',
-        { name: 'Test Vehicle', licensePlate: 'B-EX-001', type: VehicleType.TRUCK, extra: 'x' },
-      ],
+      ['name is missing', { licensePlate: MOCK_VEHICLE.licensePlate }],
+      ['licensePlate is missing', { name: MOCK_VEHICLE.name }],
+      ['an unknown field is sent', { ...MOCK_CREATE_VEHICLE_DTO, extra: 'x' }],
     ])('when %s should return 400', async (_label, body) => {
       await request(app.getHttpServer()).post('/vehicles').send(body).expect(400);
     });
@@ -59,7 +52,7 @@ describe('VehiclesController', () => {
 
   describe('GET /vehicles', () => {
     it('when vehicles exist should return 200 with the list', async () => {
-      serviceMock.listVehicles.mockResolvedValue([MOCK_VEHICLE_RESPONSE, MOCK_VEHICLE_RESPONSE]);
+      serviceMock.listVehicles.mockResolvedValue([MOCK_VEHICLE, MOCK_VEHICLE]);
 
       const res = await request(app.getHttpServer()).get('/vehicles').expect(200);
 

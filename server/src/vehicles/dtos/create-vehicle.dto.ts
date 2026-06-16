@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { VehicleType } from '@prisma/client';
-import { IsIn, IsString } from 'class-validator';
-import { vehicleTypeOptions } from '../consts';
+import { IsString } from 'class-validator';
 
 export class CreateVehicleDto {
   @IsString()
@@ -11,8 +9,4 @@ export class CreateVehicleDto {
   @IsString()
   @ApiProperty({ description: 'Unique licence plate number', example: 'B-EX-001' })
   licensePlate: string;
-
-  @IsIn(vehicleTypeOptions)
-  @ApiProperty({ enum: VehicleType, description: 'Vehicle type' })
-  type: VehicleType;
 }

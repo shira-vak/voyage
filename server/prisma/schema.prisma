@@ -7,19 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum VehicleType {
-  CAR
-  VAN
-  TRUCK
-  BUS
-}
-
 model Vehicle {
-  id           String      @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
-  licensePlate String      @unique
-  type         VehicleType
-  createdAt    DateTime    @default(now())
+  licensePlate String   @unique
+  createdAt    DateTime @default(now())
   trips        Trip[]
 
   @@index([createdAt])

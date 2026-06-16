@@ -2,16 +2,17 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Prisma, Vehicle } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateVehicleDto } from './dtos/create-vehicle.dto';
-import type { VehicleSummary } from './types';
+import { VehicleResponseDto } from './dtos/vehicle-response.dto';
+import { VehicleSummaryDto } from './dtos/vehicle-summary.dto';
 
 @Injectable()
 export class VehiclesService {
   constructor(private prismaService: PrismaService) {}
 
-  async createVehicle(dto: CreateVehicleDto): Promise<Vehicle> {
+  async createVehicle(dto: CreateVehicleDto): Promise<VehicleResponseDto> {
     try {
       return await this.prismaService.vehicle.create({
-        data: { name: dto.name, licensePlate: dto.licensePlate, type: dto.type },
+        data: { name: dto.name, licensePlate: dto.licensePlate },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
@@ -21,7 +22,7 @@ export class VehiclesService {
     }
   }
 
-  async listVehicles(): Promise<Vehicle[]> {
+  async listVehicles(): Promise<VehicleResponseDto[]> {
     return this.prismaService.vehicle.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
@@ -33,7 +34,7 @@ export class VehiclesService {
     return vehicle;
   }
 
-  async getVehicleSummary(vehicleId: string): Promise<VehicleSummary> {
+  async getVehicleSummary(vehicleId: string): Promise<VehicleSummaryDto> {
     const vehicle = await this.getVehicleById(vehicleId);
 
     const [tripCount, aggregates] = await Promise.all([
@@ -49,7 +50,6 @@ export class VehiclesService {
       vehicleId: vehicle.id,
       name: vehicle.name,
       licensePlate: vehicle.licensePlate,
-      type: vehicle.type,
       tripCount,
       totalDistanceKm: aggregates._sum.distanceKm?.toNumber() ?? 0,
       totalFuelConsumed: aggregates._sum.fuelConsumed?.toNumber() ?? 0,

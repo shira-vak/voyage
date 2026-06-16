@@ -1,10 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Prisma, Trip } from '@prisma/client';
-import type { PaginatedResult } from './types';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { VehiclesService } from '../vehicles/vehicles.service';
 import { CreateTripDto } from './dtos/create-trip.dto';
 import { ListTripsQueryDto } from './dtos/list-trips-query.dto';
+import { PaginatedTripsDto } from './dtos/paginated-trips.dto';
+import { TripResponseDto } from './dtos/trip-response.dto';
+import { toTripResponseDto } from './utils';
 
 @Injectable()
 export class TripsService {
@@ -13,7 +15,7 @@ export class TripsService {
     private vehiclesService: VehiclesService,
   ) {}
 
-  async createTrip(vehicleId: string, dto: CreateTripDto): Promise<Trip> {
+  async createTrip(vehicleId: string, dto: CreateTripDto): Promise<TripResponseDto> {
     await this.vehiclesService.getVehicleById(vehicleId);
 
     const startedAt = new Date(dto.startedAt);
@@ -25,7 +27,7 @@ export class TripsService {
 
     const durationMinutes = Math.round((endedAt.getTime() - startedAt.getTime()) / 60000);
 
-    return this.prismaService.trip.create({
+    const trip = await this.prismaService.trip.create({
       data: {
         vehicleId,
         startedAt,
@@ -35,9 +37,11 @@ export class TripsService {
         fuelConsumed: dto.fuelConsumed,
       },
     });
+
+    return toTripResponseDto(trip);
   }
 
-  async listTrips(query: ListTripsQueryDto): Promise<PaginatedResult<Trip>> {
+  async listTrips(query: ListTripsQueryDto): Promise<PaginatedTripsDto> {
     const { vehicleId, startDate, endDate, page = 1, limit = 20 } = query;
 
     const where: Prisma.TripWhereInput = {
@@ -50,7 +54,7 @@ export class TripsService {
       }),
     };
 
-    const [data, total] = await Promise.all([
+    const [trips, total] = await Promise.all([
       this.prismaService.trip.findMany({
         where,
         orderBy: { startedAt: 'desc' },
@@ -60,6 +64,6 @@ export class TripsService {
       this.prismaService.trip.count({ where }),
     ]);
 
-    return { data, total, page, limit };
+    return { data: trips.map(toTripResponseDto), total, page, limit };
   }
 }

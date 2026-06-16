@@ -58,16 +58,18 @@ src/
     ├── <feature>.module.ts
     ├── <feature>.controller.ts
     ├── <feature>.service.ts
-    ├── consts.ts       ← feature constants
-    ├── types.ts       ← feature type maps
+    ├── utils.ts       ← pure functions shared within the feature (only if needed)
     ├── dtos/
+    │   ├── create-<resource>.dto.ts
+    │   ├── <resource>-response.dto.ts   ← response shape returned by the controller
     │   └── <action>-<resource>.dto.ts
     └── __tests__/
+        ├── consts.ts  ← feature-specific test constants (e.g. input DTOs)
         ├── <feature>.controller.spec.ts
         └── <feature>.service.spec.ts
 
 src/test/
-└── consts.ts          ← shared test mocks and constants
+└── consts.ts          ← shared test mocks and constants (mock DB objects, IDs, shared values)
 ```
 
 ### Naming
@@ -80,19 +82,22 @@ src/test/
 
 - Routing and delegation only — no logic.
 - Every handler is `async` with an explicit return type.
+- **Return types must always be DTO classes**, not Prisma models or raw TypeScript types. This ensures the OpenAPI spec is correct and `openapi-typescript-codegen` generates proper frontend types.
 - Use a param DTO (e.g. `TripIdDto`) when the route param needs validation (`@IsUUID()`).
 - Every endpoint gets `@ApiOperation`, and `@ApiParam` / `@ApiQuery` where applicable.
 
 ### Services
 
 - All business logic must live in the service layer.
-- If a function in a service becomes too large or contains clearly separable logic, extract it into a utility file under the same service parent folder (utils.ts) instead of bloating the service. Utilities should remain pure functions with no side effects and must stay within the same parent folder unless explicitly shared across multiple services in that case craete a general utils.ts file under the joint parent of those two services.
+- If a function in a service becomes too large or contains clearly separable logic, extract it into a utility file under the same service parent folder (utils.ts) instead of bloating the service. Utilities should remain pure functions with no side effects and must stay within the same parent folder unless explicitly shared across multiple services in that case create a general utils.ts file under the joint parent of those two services.
 - All public methods are `async` with explicit `Promise<T>` return types.
+- **Return types should be DTO classes** so controllers can delegate and return them directly without casting.
 - Validate existence by calling the feature's own `getById` method (which throws `NotFoundException`). Do not inline the null check.
 - Throw `NotFoundException` when a resource is missing.
 - Throw `BadRequestException` for business rule violations — include useful context in the message.
-- Extract internal logic into `private async` helpers if can be shhared between service functions - if logic is pure and non related to the service injections extract to the utils file.
+- Extract internal logic into `private async` helpers if can be shared between service functions - if logic is pure and non related to the service injections extract to the utils file.
 - Cross-feature calls go through the other feature's **service**, not through Prisma directly.
+- **Prefer DTO validation over service-level guards.** Only add an `if`-throw in the service when the check is inherently cross-field (e.g. `startedAt < endedAt`) or requires DB/runtime state that the DTO cannot know at parse time. If validation can be expressed as a class-validator decorator on the DTO, do it there instead.
 
 ### DTOs
 
@@ -100,7 +105,7 @@ src/test/
 - Use `@IsUUID()` for ID params.
 - Use `@IsIn(options)` with a typed `as const` array for constrained value sets — not a raw enum.
 - Use `@Min(0)` when zero is valid; `@IsPositive()` when it is not.
-- DTO names: `<Action><Resource>Dto` (`CreateTripDto`, `UpdateStatusDto`).
+- DTO names: `<Action><Resource>Dto` for input (`CreateTripDto`), `<Resource>ResponseDto` for output (`TripResponseDto`, `VehicleSummaryDto`).
 
 ### Prisma
 
@@ -119,7 +124,7 @@ src/test/
 | Invalid input that bypasses DTO validation | `BadRequestException` |
 
 Error messages include context — what was expected, what was found.
-If need to use `BadRequestException` make sure there is no gap in the dto defenition.
+If need to use `BadRequestException` make sure there is no gap in the dto definition.
 
 ### Global Setup
 
@@ -139,7 +144,7 @@ Apply the same `ValidationPipe` configuration in controller integration tests.
 
 - TypeScript only — no `.js` or `.jsx` files to create.
 - Explicit types on all props, hook return values, state, and API responses. No `any`.
-- Keep components small and focused. If a component is too long and can be split to seperated logic, split it.
+- Keep components small and focused. If a component is too long and can be split to separated logic, split it.
 - Separate data fetching from rendering — use hooks for data logic.
 - Avoid global state unless local state + context genuinely cannot solve the problem.
 - Use `openapi-typescript-codegen` to generate a typed API client from the backend OpenAPI spec. Never re-declare types that already exist in the generated client.
@@ -160,9 +165,27 @@ describe('ServiceName') → describe('methodName') → it('when X should Y')
 
 Use `it.each` / `test.each` for parameterised cases.
 
+### No magic numbers or strings
+
+- **Never use literal values inline in tests.** Every ID, date, numeric value, and string that represents a domain concept must be a named constant.
+- Derive related values from the base constant rather than inventing a separate literal:
+  ```ts
+  // ✅ correct
+  export const MOCK_TRIP_START = new Date('2024-06-01T08:00:00Z');
+  export const MOCK_TRIP_DURATION_MINUTES = 90;
+  export const MOCK_TRIP_END = new Date(MOCK_TRIP_START.getTime() + MOCK_TRIP_DURATION_MINUTES * 60_000);
+
+  // ❌ wrong — independent literals that can drift
+  startedAt: '2024-06-01T08:00:00Z',
+  endedAt:   '2024-06-01T09:30:00Z',
+  ```
+- When testing a value that is offset from another (e.g. "one minute after end"), express it as `new Date(MOCK_TRIP_END.getTime() + 60_000)`, not as a hard-coded timestamp.
+
 ### Mocks
 
-- Define mock objects at `consts.ts` file in the same folder as the test file or in `src/test/consts.ts` (if shared with other tests).
+- **Shared** mock objects and base constants (IDs, mock DB rows, mock response DTOs, `prismaMock`) belong in `src/test/consts.ts`.
+- **Feature-specific** input DTOs and test-only constants that are only used within one feature's tests belong in `src/<feature>/__tests__/consts.ts`.
+- Import from the nearest scope: prefer `__tests__/consts.ts` over `src/test/consts.ts` when the constant is not shared.
 
 ---
 

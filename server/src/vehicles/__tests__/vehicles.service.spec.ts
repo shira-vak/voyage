@@ -1,10 +1,21 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { Prisma, VehicleType } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 import { PrismaService } from '../../prisma/prisma.service';
-import { MOCK_VEHICLE, MOCK_VEHICLE_ID, prismaMock } from '../../test/consts';
+import {
+  MOCK_AVG_DURATION_MINUTES,
+  MOCK_TOTAL_DISTANCE_KM,
+  MOCK_TOTAL_FUEL_CONSUMED,
+  MOCK_TRIP_COUNT,
+  MOCK_VEHICLE,
+  MOCK_VEHICLE_ID,
+  MOCK_VEHICLE_LICENSE_PLATE,
+  MOCK_VEHICLE_NAME,
+  prismaMock,
+} from '../../test/consts';
 import { VehiclesService } from '../vehicles.service';
+import { MOCK_CREATE_VEHICLE_DTO } from './consts';
 
 describe('VehiclesService', () => {
   let service: VehiclesService;
@@ -22,14 +33,10 @@ describe('VehiclesService', () => {
     it('when data is valid should create and return the vehicle', async () => {
       prismaMock.vehicle.create.mockResolvedValue(MOCK_VEHICLE);
 
-      const result = await service.createVehicle({
-        name: 'Test Vehicle',
-        licensePlate: 'B-EX-001',
-        type: VehicleType.TRUCK,
-      });
+      const result = await service.createVehicle(MOCK_CREATE_VEHICLE_DTO);
 
       expect(prismaMock.vehicle.create).toHaveBeenCalledWith({
-        data: { name: 'Test Vehicle', licensePlate: 'B-EX-001', type: VehicleType.TRUCK },
+        data: { name: MOCK_VEHICLE_NAME, licensePlate: MOCK_VEHICLE_LICENSE_PLATE },
       });
       expect(result.id).toBe(MOCK_VEHICLE_ID);
     });
@@ -41,18 +48,14 @@ describe('VehiclesService', () => {
       });
       prismaMock.vehicle.create.mockRejectedValue(p2002);
 
-      await expect(
-        service.createVehicle({ name: 'Test Vehicle', licensePlate: 'B-EX-001', type: VehicleType.TRUCK }),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.createVehicle(MOCK_CREATE_VEHICLE_DTO)).rejects.toThrow(BadRequestException);
     });
 
     it('when an unexpected error occurs should rethrow it', async () => {
       const unexpectedError = new Error('DB connection lost');
       prismaMock.vehicle.create.mockRejectedValue(unexpectedError);
 
-      await expect(
-        service.createVehicle({ name: 'Test Vehicle', licensePlate: 'B-EX-001', type: VehicleType.TRUCK }),
-      ).rejects.toThrow('DB connection lost');
+      await expect(service.createVehicle(MOCK_CREATE_VEHICLE_DTO)).rejects.toThrow('DB connection lost');
     });
   });
 
@@ -96,19 +99,22 @@ describe('VehiclesService', () => {
   describe('getVehicleSummary', () => {
     it('when vehicle has trips should return aggregated summary', async () => {
       prismaMock.vehicle.findUnique.mockResolvedValue(MOCK_VEHICLE);
-      prismaMock.trip.count.mockResolvedValue(3);
+      prismaMock.trip.count.mockResolvedValue(MOCK_TRIP_COUNT);
       prismaMock.trip.aggregate.mockResolvedValue({
-        _sum: { distanceKm: new Decimal('435.3'), fuelConsumed: new Decimal('54.9') },
-        _avg: { durationMinutes: 90.0 },
+        _sum: {
+          distanceKm: new Decimal(MOCK_TOTAL_DISTANCE_KM.toString()),
+          fuelConsumed: new Decimal(MOCK_TOTAL_FUEL_CONSUMED.toString()),
+        },
+        _avg: { durationMinutes: MOCK_AVG_DURATION_MINUTES },
       });
 
       const result = await service.getVehicleSummary(MOCK_VEHICLE_ID);
 
       expect(result.vehicleId).toBe(MOCK_VEHICLE_ID);
-      expect(result.tripCount).toBe(3);
-      expect(result.totalDistanceKm).toBe(435.3);
-      expect(result.totalFuelConsumed).toBe(54.9);
-      expect(result.averageDurationMinutes).toBe(90);
+      expect(result.tripCount).toBe(MOCK_TRIP_COUNT);
+      expect(result.totalDistanceKm).toBe(MOCK_TOTAL_DISTANCE_KM);
+      expect(result.totalFuelConsumed).toBe(MOCK_TOTAL_FUEL_CONSUMED);
+      expect(result.averageDurationMinutes).toBe(MOCK_AVG_DURATION_MINUTES);
     });
 
     it('when vehicle has no trips should return zero aggregates', async () => {

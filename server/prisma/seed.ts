@@ -1,4 +1,4 @@
-import { PrismaClient, VehicleType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -11,7 +11,13 @@ type TripInput = {
   fuelConsumed: number;
 };
 
-function buildTrip(vehicleId: string, startedAt: Date, endedAt: Date, distanceKm: number, fuelConsumed: number): TripInput {
+function buildTrip(
+  vehicleId: string,
+  startedAt: Date,
+  endedAt: Date,
+  distanceKm: number,
+  fuelConsumed: number,
+): TripInput {
   const durationMinutes = Math.round((endedAt.getTime() - startedAt.getTime()) / 60000);
   return { vehicleId, startedAt, endedAt, durationMinutes, distanceKm, fuelConsumed };
 }
@@ -23,11 +29,11 @@ async function seed(): Promise<void> {
   await prisma.vehicle.deleteMany();
 
   const [truck1, van1, car1, bus1, truck2] = await Promise.all([
-    prisma.vehicle.create({ data: { name: 'Berlin Express', licensePlate: 'B-EX-001', type: VehicleType.TRUCK } }),
-    prisma.vehicle.create({ data: { name: 'Hamburg Van', licensePlate: 'HH-VN-042', type: VehicleType.VAN } }),
-    prisma.vehicle.create({ data: { name: 'Munich Sedan', licensePlate: 'M-SD-099', type: VehicleType.CAR } }),
-    prisma.vehicle.create({ data: { name: 'Cologne Bus', licensePlate: 'K-BS-017', type: VehicleType.BUS } }),
-    prisma.vehicle.create({ data: { name: 'Stuttgart Cargo', licensePlate: 'S-CG-203', type: VehicleType.TRUCK } }),
+    prisma.vehicle.create({ data: { name: 'Berlin Express', licensePlate: 'B-EX-001' } }),
+    prisma.vehicle.create({ data: { name: 'Hamburg Van', licensePlate: 'HH-VN-042' } }),
+    prisma.vehicle.create({ data: { name: 'Munich Sedan', licensePlate: 'M-SD-099' } }),
+    prisma.vehicle.create({ data: { name: 'Cologne Bus', licensePlate: 'K-BS-017' } }),
+    prisma.vehicle.create({ data: { name: 'Stuttgart Cargo', licensePlate: 'S-CG-203' } }),
   ]);
 
   await prisma.trip.createMany({
