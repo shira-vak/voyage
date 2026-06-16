@@ -47,9 +47,7 @@ export class VehiclesService {
     ]);
 
     return {
-      vehicleId: vehicle.id,
-      name: vehicle.name,
-      licensePlate: vehicle.licensePlate,
+      vehicle,
       tripCount,
       totalDistanceKm: aggregates._sum.distanceKm?.toNumber() ?? 0,
       totalFuelConsumed: aggregates._sum.fuelConsumed?.toNumber() ?? 0,

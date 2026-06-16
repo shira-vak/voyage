@@ -1,14 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { VehicleResponseDto } from './vehicle-response.dto';
 
 export class VehicleSummaryDto {
-  @ApiProperty()
-  vehicleId: string;
-
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  licensePlate: string;
+  @ApiProperty({ type: VehicleResponseDto })
+  vehicle: VehicleResponseDto;
 
   @ApiProperty()
   tripCount: number;

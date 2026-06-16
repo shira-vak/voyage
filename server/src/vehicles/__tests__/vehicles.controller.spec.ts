@@ -74,7 +74,7 @@ describe('VehiclesController', () => {
 
       const res = await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_ID}/summary`).expect(200);
 
-      expect(res.body.vehicleId).toBe(MOCK_VEHICLE_ID);
+      expect(res.body.vehicle.id).toBe(MOCK_VEHICLE_ID);
       expect(res.body.tripCount).toBe(MOCK_VEHICLE_SUMMARY.tripCount);
     });
 

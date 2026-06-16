@@ -54,9 +54,7 @@ export const MOCK_TOTAL_FUEL_CONSUMED = 54.9;
 export const MOCK_AVG_DURATION_MINUTES = 90;
 
 export const MOCK_VEHICLE_SUMMARY: VehicleSummaryDto = {
-  vehicleId: MOCK_VEHICLE_ID,
-  name: MOCK_VEHICLE_NAME,
-  licensePlate: MOCK_VEHICLE_LICENSE_PLATE,
+  vehicle: MOCK_VEHICLE,
   tripCount: MOCK_TRIP_COUNT,
   totalDistanceKm: MOCK_TOTAL_DISTANCE_KM,
   totalFuelConsumed: MOCK_TOTAL_FUEL_CONSUMED,

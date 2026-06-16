@@ -4,7 +4,7 @@ import { CreateTripDto } from './dtos/create-trip.dto';
 import { ListTripsQueryDto } from './dtos/list-trips-query.dto';
 import { PaginatedTripsDto } from './dtos/paginated-trips.dto';
 import { TripResponseDto } from './dtos/trip-response.dto';
-import { VehicleIdDto } from './dtos/vehicle-id.dto';
+import { VehicleIdDto } from '../vehicles/dtos/vehicle-id.dto';
 import { TripsService } from './trips.service';
 
 @Controller()

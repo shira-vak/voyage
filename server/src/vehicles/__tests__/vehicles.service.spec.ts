@@ -110,7 +110,7 @@ describe('VehiclesService', () => {
 
       const result = await service.getVehicleSummary(MOCK_VEHICLE_ID);
 
-      expect(result.vehicleId).toBe(MOCK_VEHICLE_ID);
+      expect(result.vehicle.id).toBe(MOCK_VEHICLE_ID);
       expect(result.tripCount).toBe(MOCK_TRIP_COUNT);
       expect(result.totalDistanceKm).toBe(MOCK_TOTAL_DISTANCE_KM);
       expect(result.totalFuelConsumed).toBe(MOCK_TOTAL_FUEL_CONSUMED);
