@@ -15,10 +15,10 @@ export class TripsService {
     private vehiclesService: VehiclesService,
   ) {}
 
-  async createTrip(vehicleId: string, dto: CreateTripDto): Promise<TripResponseDto> {
+  async createTrip(vehicleId: string, tripDto: CreateTripDto): Promise<TripResponseDto> {
     await this.vehiclesService.getVehicleById(vehicleId);
 
-    const { startedAt, endedAt } = dto;
+    const { startedAt, endedAt, distanceKm, fuelConsumed } = tripDto;
 
     if (startedAt >= endedAt) {
       throw new BadRequestException('startedAt must be before endedAt');
@@ -32,16 +32,16 @@ export class TripsService {
         startedAt,
         endedAt,
         durationMinutes,
-        distanceKm: dto.distanceKm,
-        fuelConsumed: dto.fuelConsumed,
+        distanceKm,
+        fuelConsumed,
       },
     });
 
     return toTripResponseDto(trip);
   }
 
-  async listTrips(query: ListTripsQueryDto): Promise<PaginatedTripsDto> {
-    const { vehicleId, startDate, endDate, page = 1, limit = 20 } = query;
+  async listTrips(tripsQuery: ListTripsQueryDto): Promise<PaginatedTripsDto> {
+    const { vehicleId, startDate, endDate, page, limit } = tripsQuery;
 
     const where: Prisma.TripWhereInput = {
       ...(vehicleId && { vehicleId }),
@@ -53,7 +53,7 @@ export class TripsService {
       }),
     };
 
-    const [trips, total] = await Promise.all([
+    const [trips, totalTrips] = await Promise.all([
       this.prismaService.trip.findMany({
         where,
         orderBy: { startedAt: 'desc' },
@@ -63,6 +63,6 @@ export class TripsService {
       this.prismaService.trip.count({ where }),
     ]);
 
-    return { data: trips.map(toTripResponseDto), total, page, limit };
+    return { data: trips.map(toTripResponseDto), totalTrips, page, limit };
   }
 }

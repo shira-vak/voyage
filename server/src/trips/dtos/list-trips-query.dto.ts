@@ -33,7 +33,7 @@ export class ListTripsQueryDto {
   @IsInt()
   @Min(1)
   @ApiProperty({ required: false, description: 'Page number (default: 1)', example: 1 })
-  page?: number;
+  page: number = 1;
 
   @IsOptional()
   @Type(() => Number)
@@ -41,5 +41,5 @@ export class ListTripsQueryDto {
   @Min(1)
   @Max(100)
   @ApiProperty({ required: false, description: 'Items per page, max 100 (default: 20)', example: 20 })
-  limit?: number;
+  limit: number = 20;
 }

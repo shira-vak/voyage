@@ -24,6 +24,14 @@ export class VehiclesController {
     return this.vehiclesService.listVehicles();
   }
 
+  @Get(':vehicleId')
+  @ApiOperation({ summary: 'Get a vehicle by ID' })
+  @ApiParam({ name: 'vehicleId' })
+  @ApiOkResponse({ type: VehicleResponseDto })
+  async getVehicleById(@Param() params: VehicleIdDto): Promise<VehicleResponseDto> {
+    return this.vehiclesService.getVehicleById(params.vehicleId);
+  }
+
   @Get(':vehicleId/summary')
   @ApiOperation({ summary: 'Get aggregated trip summary for a vehicle' })
   @ApiParam({ name: 'vehicleId' })

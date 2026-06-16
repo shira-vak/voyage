@@ -15,7 +15,7 @@ import {
 } from '../../test/consts';
 import { VehiclesService } from '../../vehicles/vehicles.service';
 import { TripsService } from '../trips.service';
-import { MOCK_CREATE_TRIP_DTO } from './consts';
+import { MOCK_CREATE_TRIP_DTO, MOCK_LIST_TRIPS_QUERY } from './consts';
 
 const vehiclesServiceMock = {
   getVehicleById: jest.fn(),
@@ -106,10 +106,10 @@ describe('TripsService', () => {
       prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
       prismaMock.trip.count.mockResolvedValue(1);
 
-      const result = await service.listTrips({});
+      const result = await service.listTrips(MOCK_LIST_TRIPS_QUERY);
 
       expect(result.data).toHaveLength(1);
-      expect(result.total).toBe(1);
+      expect(result.totalTrips).toBe(1);
       expect(result.page).toBe(1);
       expect(result.limit).toBe(20);
     });
@@ -118,7 +118,7 @@ describe('TripsService', () => {
       prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
       prismaMock.trip.count.mockResolvedValue(1);
 
-      await service.listTrips({ vehicleId: MOCK_VEHICLE_ID });
+      await service.listTrips({ ...MOCK_LIST_TRIPS_QUERY, vehicleId: MOCK_VEHICLE_ID });
 
       expect(prismaMock.trip.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: expect.objectContaining({ vehicleId: MOCK_VEHICLE_ID }) }),
@@ -129,7 +129,7 @@ describe('TripsService', () => {
       prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
       prismaMock.trip.count.mockResolvedValue(1);
 
-      await service.listTrips({ startDate: MOCK_TRIP_START, endDate: MOCK_TRIP_END });
+      await service.listTrips({ ...MOCK_LIST_TRIPS_QUERY, startDate: MOCK_TRIP_START, endDate: MOCK_TRIP_END });
 
       expect(prismaMock.trip.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -141,35 +141,35 @@ describe('TripsService', () => {
     it('when custom pagination is applied should use page and limit', async () => {
       const page = 2;
       const limit = 10;
-      const total = 50;
+      const totalTrips = 50;
       prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
-      prismaMock.trip.count.mockResolvedValue(total);
+      prismaMock.trip.count.mockResolvedValue(totalTrips);
 
-      const result = await service.listTrips({ page, limit });
+      const result = await service.listTrips({ ...MOCK_LIST_TRIPS_QUERY, page, limit });
 
       expect(prismaMock.trip.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ skip: (page - 1) * limit, take: limit }),
       );
       expect(result.page).toBe(page);
       expect(result.limit).toBe(limit);
-      expect(result.total).toBe(total);
+      expect(result.totalTrips).toBe(totalTrips);
     });
 
     it('when no trips match should return empty data with total zero', async () => {
       prismaMock.trip.findMany.mockResolvedValue([]);
       prismaMock.trip.count.mockResolvedValue(0);
 
-      const result = await service.listTrips({ vehicleId: MOCK_VEHICLE_ID });
+      const result = await service.listTrips({ ...MOCK_LIST_TRIPS_QUERY, vehicleId: MOCK_VEHICLE_ID });
 
       expect(result.data).toEqual([]);
-      expect(result.total).toBe(0);
+      expect(result.totalTrips).toBe(0);
     });
 
     it('should map Decimal fields to numbers in returned trips', async () => {
       prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
       prismaMock.trip.count.mockResolvedValue(1);
 
-      const result = await service.listTrips({});
+      const result = await service.listTrips(MOCK_LIST_TRIPS_QUERY);
 
       expect(result.data[0].distanceKm).toBe(MOCK_TRIP_DISTANCE_KM);
       expect(result.data[0].fuelConsumed).toBe(MOCK_TRIP_FUEL_CONSUMED);

@@ -30,12 +30,12 @@ describe('TripsController', () => {
   beforeEach(() => jest.clearAllMocks());
   afterAll(() => app.close());
 
-  describe('POST /vehicles/:vehicleId/trips', () => {
+  describe('POST /vehicles/:vehicleId/trip', () => {
     it('when data is valid should return 201 with the created trip', async () => {
       serviceMock.createTrip.mockResolvedValue(MOCK_TRIP_RESPONSE);
 
       const res = await request(app.getHttpServer())
-        .post(`/vehicles/${MOCK_VEHICLE_ID}/trips`)
+        .post(`/vehicles/${MOCK_VEHICLE_ID}/trip`)
         .send(MOCK_CREATE_TRIP_DTO)
         .expect(201);
 
@@ -47,13 +47,13 @@ describe('TripsController', () => {
       serviceMock.createTrip.mockRejectedValue(new NotFoundException());
 
       await request(app.getHttpServer())
-        .post(`/vehicles/${MOCK_VEHICLE_ID}/trips`)
+        .post(`/vehicles/${MOCK_VEHICLE_ID}/trip`)
         .send(MOCK_CREATE_TRIP_DTO)
         .expect(404);
     });
 
     it('when vehicleId is not a valid UUID should return 400', async () => {
-      await request(app.getHttpServer()).post(`/vehicles/${INVALID_UUID}/trips`).send(MOCK_CREATE_TRIP_DTO).expect(400);
+      await request(app.getHttpServer()).post(`/vehicles/${INVALID_UUID}/trip`).send(MOCK_CREATE_TRIP_DTO).expect(400);
     });
 
     it.each([
@@ -78,26 +78,26 @@ describe('TripsController', () => {
       ['startedAt is not a date string', { ...MOCK_CREATE_TRIP_DTO, startedAt: 'not-a-date' }],
       ['an unknown field is sent', { ...MOCK_CREATE_TRIP_DTO, extra: 'x' }],
     ])('when %s should return 400', async (_label, body) => {
-      await request(app.getHttpServer()).post(`/vehicles/${MOCK_VEHICLE_ID}/trips`).send(body).expect(400);
+      await request(app.getHttpServer()).post(`/vehicles/${MOCK_VEHICLE_ID}/trip`).send(body).expect(400);
     });
   });
 
   describe('GET /trips', () => {
     it('when no filters are applied should return 200 with paginated result', async () => {
-      const total = 1;
+      const totalTrips = 1;
       const page = 1;
       const limit = 20;
-      serviceMock.listTrips.mockResolvedValue({ data: [MOCK_TRIP_RESPONSE], total, page, limit });
+      serviceMock.listTrips.mockResolvedValue({ data: [MOCK_TRIP_RESPONSE], totalTrips, page, limit });
 
       const res = await request(app.getHttpServer()).get('/trips').expect(200);
 
       expect(res.body.data).toHaveLength(1);
-      expect(res.body.total).toBe(total);
+      expect(res.body.totalTrips).toBe(totalTrips);
       expect(res.body.page).toBe(page);
     });
 
     it('when vehicleId filter is applied should return 200', async () => {
-      serviceMock.listTrips.mockResolvedValue({ data: [MOCK_TRIP_RESPONSE], total: 1, page: 1, limit: 20 });
+      serviceMock.listTrips.mockResolvedValue({ data: [MOCK_TRIP_RESPONSE], totalTrips: 1, page: 1, limit: 20 });
 
       const res = await request(app.getHttpServer()).get(`/trips?vehicleId=${MOCK_VEHICLE_ID}`).expect(200);
 
@@ -105,12 +105,12 @@ describe('TripsController', () => {
     });
 
     it('when no trips match should return 200 with empty data', async () => {
-      serviceMock.listTrips.mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 });
+      serviceMock.listTrips.mockResolvedValue({ data: [], totalTrips: 0, page: 1, limit: 20 });
 
       const res = await request(app.getHttpServer()).get('/trips').expect(200);
 
       expect(res.body.data).toEqual([]);
-      expect(res.body.total).toBe(0);
+      expect(res.body.totalTrips).toBe(0);
     });
 
     it('when page is 0 should return 400', async () => {

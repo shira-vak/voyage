@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, Vehicle } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateVehicleDto } from './dtos/create-vehicle.dto';
 import { VehicleResponseDto } from './dtos/vehicle-response.dto';
@@ -9,14 +9,15 @@ import { VehicleSummaryDto } from './dtos/vehicle-summary.dto';
 export class VehiclesService {
   constructor(private prismaService: PrismaService) {}
 
-  async createVehicle(dto: CreateVehicleDto): Promise<VehicleResponseDto> {
+  async createVehicle(vehicleDto: CreateVehicleDto): Promise<VehicleResponseDto> {
+    const { name, licensePlate } = vehicleDto;
     try {
       return await this.prismaService.vehicle.create({
-        data: { name: dto.name, licensePlate: dto.licensePlate },
+        data: { name, licensePlate },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        throw new BadRequestException(`Licence plate '${dto.licensePlate}' is already registered.`);
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error?.code === 'P2002') {
+        throw new BadRequestException(`Licence plate '${licensePlate}' is already registered.`);
       }
       throw error;
     }
@@ -26,11 +27,10 @@ export class VehiclesService {
     return this.prismaService.vehicle.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
-  async getVehicleById(vehicleId: string): Promise<Vehicle> {
+  async getVehicleById(vehicleId: string): Promise<VehicleResponseDto> {
     const vehicle = await this.prismaService.vehicle.findUnique({ where: { id: vehicleId } });
-    if (!vehicle) {
-      throw new NotFoundException(`Vehicle '${vehicleId}' not found.`);
-    }
+
+    if (!vehicle) throw new NotFoundException(`Vehicle '${vehicleId}' not found.`);
     return vehicle;
   }
 

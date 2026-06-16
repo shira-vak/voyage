@@ -68,6 +68,27 @@ describe('VehiclesController', () => {
     });
   });
 
+  describe('GET /vehicles/:vehicleId', () => {
+    it('when vehicle exists should return 200 with the vehicle', async () => {
+      serviceMock.getVehicleById.mockResolvedValue(MOCK_VEHICLE);
+
+      const res = await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_ID}`).expect(200);
+
+      expect(res.body.id).toBe(MOCK_VEHICLE_ID);
+      expect(res.body.name).toBe(MOCK_VEHICLE.name);
+    });
+
+    it('when vehicle does not exist should return 404', async () => {
+      serviceMock.getVehicleById.mockRejectedValue(new NotFoundException());
+
+      await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_ID}`).expect(404);
+    });
+
+    it('when vehicleId is not a valid UUID should return 400', async () => {
+      await request(app.getHttpServer()).get(`/vehicles/${INVALID_UUID}`).expect(400);
+    });
+  });
+
   describe('GET /vehicles/:vehicleId/summary', () => {
     it('when vehicle exists should return 200 with summary', async () => {
       serviceMock.getVehicleSummary.mockResolvedValue(MOCK_VEHICLE_SUMMARY);

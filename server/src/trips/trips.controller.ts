@@ -11,7 +11,7 @@ import { TripsService } from './trips.service';
 export class TripsController {
   constructor(private tripsService: TripsService) {}
 
-  @Post('vehicles/:vehicleId/trips')
+  @Post('vehicles/:vehicleId/trip')
   @ApiOperation({ summary: 'Record a new trip for a vehicle' })
   @ApiParam({ name: 'vehicleId' })
   @ApiCreatedResponse({ type: TripResponseDto })

@@ -6,7 +6,7 @@ export class PaginatedTripsDto {
   data: TripResponseDto[];
 
   @ApiProperty()
-  total: number;
+  totalTrips: number;
 
   @ApiProperty()
   page: number;
