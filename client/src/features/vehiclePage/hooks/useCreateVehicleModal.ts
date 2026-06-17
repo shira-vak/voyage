@@ -1,9 +1,9 @@
 import { App } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { VehicleFormValues } from "../types";
 import { VehiclesService } from "../../../api/generated";
-
+import { extractErrorMessage } from "../../utils";
+import { VehicleFormValues } from "../types";
 
 type Params = {
   form: any;
@@ -11,11 +11,7 @@ type Params = {
   onClose: () => void;
 };
 
-export function useCreateVehicleModal({
-  form,
-  onCreated,
-  onClose,
-}: Params) {
+export function useCreateVehicleModal({ form, onCreated, onClose }: Params) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
@@ -29,17 +25,13 @@ export function useCreateVehicleModal({
         requestBody: values,
       });
 
-      void message.success(
-        t("vehicles.modal.success", { name: values.name }),
-      );
+      void message.success(t("vehicles.modal.success", { name: values.name }));
 
       form.resetFields();
       onCreated();
     } catch (err) {
       void message.error(
-        err instanceof Error
-          ? err.message
-          : t("vehicles.modal.errorFallback"),
+        extractErrorMessage(err, t("vehicles.modal.errorFallback")),
       );
     } finally {
       setSubmitting(false);

@@ -1,9 +1,10 @@
-import { App } from 'antd';
-import type { FormInstance } from 'antd';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { TripsService } from '../../../api/generated';
-import type { TripFormValues } from '../types';
+import type { FormInstance } from "antd";
+import { App } from "antd";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { TripsService } from "../../../api/generated";
+import { extractErrorMessage } from "../../utils";
+import type { TripFormValues } from "../types";
 
 type Params = {
   form: FormInstance<TripFormValues>;
@@ -29,11 +30,13 @@ export function useCreateTripModal({ form, onCreated, onClose }: Params) {
           fuelConsumed: values.fuelConsumed,
         },
       });
-      void message.success(t('trips.modal.success'));
+      void message.success(t("trips.modal.success"));
       form.resetFields();
       onCreated();
     } catch (err) {
-      void message.error(err instanceof Error ? err.message : t('trips.modal.errorFallback'));
+      void message.error(
+        extractErrorMessage(err, t("trips.modal.errorFallback")),
+      );
     } finally {
       setSubmitting(false);
     }

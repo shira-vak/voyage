@@ -32,7 +32,6 @@ export function useTrips(query: TripsQuery): UseTripsResult {
     } finally {
       setLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(query)]);
 
   useEffect(() => { void load(); }, [load]);
