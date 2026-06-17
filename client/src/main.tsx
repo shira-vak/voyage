@@ -2,7 +2,10 @@ import { App as AntApp, ConfigProvider } from 'antd';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { OpenAPI } from './api/generated';
 import './index.css';
+
+OpenAPI.BASE = '/api';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

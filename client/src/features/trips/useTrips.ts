@@ -1,16 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
-import { tripsApi } from '../../api/trips';
-import type { ListTripsQuery, PaginatedTripsResponse } from '../../api/types';
+import type { PaginatedTripsDto } from '../../api/generated';
+import { TripsService } from '../../api/generated';
+
+interface TripsQuery {
+  licensePlate?: string;
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  limit?: number;
+}
 
 interface UseTripsResult {
-  result: PaginatedTripsResponse | null;
+  result: PaginatedTripsDto | null;
   loading: boolean;
   error: string | null;
   reload: () => void;
 }
 
-export function useTrips(query: ListTripsQuery): UseTripsResult {
-  const [result, setResult] = useState<PaginatedTripsResponse | null>(null);
+export function useTrips(query: TripsQuery): UseTripsResult {
+  const [result, setResult] = useState<PaginatedTripsDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +26,13 @@ export function useTrips(query: ListTripsQuery): UseTripsResult {
     setLoading(true);
     setError(null);
     try {
-      const data = await tripsApi.list(query);
+      const data = await TripsService.tripsControllerListTrips(
+        query.licensePlate,
+        query.startDate,
+        query.endDate,
+        query.page,
+        query.limit,
+      );
       setResult(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load trips');

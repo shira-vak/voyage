@@ -15,8 +15,8 @@ export class TripsService {
     private vehiclesService: VehiclesService,
   ) {}
 
-  async createTrip(vehicleId: string, tripDto: CreateTripDto): Promise<TripResponseDto> {
-    await this.vehiclesService.getVehicleById(vehicleId);
+  async createTrip(licensePlate: string, tripDto: CreateTripDto): Promise<TripResponseDto> {
+    const vehicle = await this.vehiclesService.getVehicleByLicensePlate(licensePlate);
 
     const { startedAt, endedAt, distanceKm, fuelConsumed } = tripDto;
 
@@ -28,7 +28,7 @@ export class TripsService {
 
     const trip = await this.prismaService.trip.create({
       data: {
-        vehicleId,
+        vehicleId: vehicle.id,
         startedAt,
         endedAt,
         durationMinutes,
@@ -41,7 +41,14 @@ export class TripsService {
   }
 
   async listTrips(tripsQuery: ListTripsQueryDto): Promise<PaginatedTripsDto> {
-    const { vehicleId, startDate, endDate, page, limit } = tripsQuery;
+    const { licensePlate, startDate, endDate, page, limit } = tripsQuery;
+
+    let vehicleId: string | undefined;
+    if (licensePlate) {
+      const vehicle = await this.vehiclesService.findVehicleByLicensePlate(licensePlate);
+      if (!vehicle) return { data: [], totalTrips: 0, page, limit };
+      vehicleId = vehicle.id;
+    }
 
     const where: Prisma.TripWhereInput = {
       ...(vehicleId && { vehicleId }),

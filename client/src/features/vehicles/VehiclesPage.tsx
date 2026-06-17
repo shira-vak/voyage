@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Alert, Button, Card, Col, Empty, Row, Skeleton, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import type { VehicleResponse } from '../../api/types';
+import type { VehicleResponseDto } from '../../api/generated';
 import CreateVehicleModal from './CreateVehicleModal';
 import VehicleSummaryDrawer from './VehicleSummaryDrawer';
 import { useVehicles } from './useVehicles';
@@ -11,13 +11,13 @@ function VehicleCard({
   vehicle,
   onViewSummary,
 }: {
-  vehicle: VehicleResponse;
+  vehicle: VehicleResponseDto;
   onViewSummary: (id: string) => void;
 }): React.ReactElement {
   return (
     <Card
       hoverable
-      onClick={() => onViewSummary(vehicle.id)}
+      onClick={() => onViewSummary(vehicle.licensePlate)}
       styles={{ body: { padding: '20px 24px' } }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -43,7 +43,7 @@ function VehicleCard({
 export default function VehiclesPage(): React.ReactElement {
   const { vehicles, loading, error, reload } = useVehicles();
   const [createOpen, setCreateOpen] = useState(false);
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
+  const [selectedLicensePlate, setSelectedLicensePlate] = useState<string | null>(null);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -86,7 +86,7 @@ export default function VehiclesPage(): React.ReactElement {
         <Row gutter={[16, 16]}>
           {vehicles.map((v) => (
             <Col key={v.id} xs={24} sm={12} md={8}>
-              <VehicleCard vehicle={v} onViewSummary={setSelectedVehicleId} />
+              <VehicleCard vehicle={v} onViewSummary={setSelectedLicensePlate} />
             </Col>
           ))}
         </Row>
@@ -102,8 +102,8 @@ export default function VehiclesPage(): React.ReactElement {
       />
 
       <VehicleSummaryDrawer
-        vehicleId={selectedVehicleId}
-        onClose={() => setSelectedVehicleId(null)}
+        licensePlate={selectedLicensePlate}
+        onClose={() => setSelectedLicensePlate(null)}
       />
     </div>
   );

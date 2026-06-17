@@ -1,11 +1,12 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateVehicleDto } from './dtos/create-vehicle.dto';
-import { VehicleIdDto } from './dtos/vehicle-id.dto';
+import { VehicleLicensePlateDto } from './dtos/vehicle-license-plate.dto';
 import { VehicleResponseDto } from './dtos/vehicle-response.dto';
 import { VehicleSummaryDto } from './dtos/vehicle-summary.dto';
 import { VehiclesService } from './vehicles.service';
 
+@ApiTags('Vehicles')
 @Controller('vehicles')
 export class VehiclesController {
   constructor(private vehiclesService: VehiclesService) {}
@@ -24,19 +25,19 @@ export class VehiclesController {
     return this.vehiclesService.listVehicles();
   }
 
-  @Get(':vehicleId')
-  @ApiOperation({ summary: 'Get a vehicle by ID' })
-  @ApiParam({ name: 'vehicleId' })
+  @Get(':licensePlate')
+  @ApiOperation({ summary: 'Get a vehicle by license plate' })
+  @ApiParam({ name: 'licensePlate', description: 'Vehicle license plate' })
   @ApiOkResponse({ type: VehicleResponseDto })
-  async getVehicleById(@Param() params: VehicleIdDto): Promise<VehicleResponseDto> {
-    return this.vehiclesService.getVehicleById(params.vehicleId);
+  async getVehicleByLicensePlate(@Param() params: VehicleLicensePlateDto): Promise<VehicleResponseDto> {
+    return this.vehiclesService.getVehicleByLicensePlate(params.licensePlate);
   }
 
-  @Get(':vehicleId/summary')
+  @Get(':licensePlate/summary')
   @ApiOperation({ summary: 'Get aggregated trip summary for a vehicle' })
-  @ApiParam({ name: 'vehicleId' })
+  @ApiParam({ name: 'licensePlate', description: 'Vehicle license plate' })
   @ApiOkResponse({ type: VehicleSummaryDto })
-  async getVehicleSummary(@Param() params: VehicleIdDto): Promise<VehicleSummaryDto> {
-    return this.vehiclesService.getVehicleSummary(params.vehicleId);
+  async getVehicleSummary(@Param() params: VehicleLicensePlateDto): Promise<VehicleSummaryDto> {
+    return this.vehiclesService.getVehicleSummary(params.licensePlate);
   }
 }

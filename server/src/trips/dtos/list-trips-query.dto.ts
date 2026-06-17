@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
+import { IsDate, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class ListTripsQueryDto {
   @IsOptional()
-  @IsUUID()
-  @ApiProperty({ required: false, description: 'Filter by vehicle ID' })
-  vehicleId?: string;
+  @IsString()
+  @ApiProperty({ required: false, description: 'Filter by vehicle license plate' })
+  licensePlate?: string;
 
   @IsOptional()
   @Type(() => Date)

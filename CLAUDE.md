@@ -149,6 +149,49 @@ Apply the same `ValidationPipe` configuration in controller integration tests.
 - Avoid global state unless local state + context genuinely cannot solve the problem.
 - Use `openapi-typescript-codegen` to generate a typed API client from the backend OpenAPI spec. Never re-declare types that already exist in the generated client.
 
+### OpenAPI Client Generation
+
+The `client/src/api/` folder has two parts:
+
+```
+client/src/api/
+├── openapi.json       ← committed spec (source of truth)
+└── generated/         ← never edit by hand
+    ├── core/
+    ├── models/
+    ├── services/
+    └── index.ts
+```
+
+**Workflow when the API changes:**
+
+1. Start the server (`npm run start:dev` in `server/`).
+2. In `client/`, run `npm run api:generate` — fetches the live spec from `http://localhost:3000/api-json`, overwrites `src/api/openapi.json`, then regenerates `src/api/generated/`.
+3. Commit both `openapi.json` and the regenerated `src/api/generated/` files together.
+
+**Base URL** — configured once in `client/src/main.tsx`:
+```ts
+import { OpenAPI } from './api/generated';
+OpenAPI.BASE = '/api';
+```
+
+The Vite proxy strips the `/api` prefix before forwarding to the NestJS server.
+
+**Importing from the generated client** — always import through the generated index barrel:
+```ts
+import type { TripResponseDto } from '../../api/generated';
+import { TripsService } from '../../api/generated';
+```
+
+### API Design — Vehicle Lookup by License Plate
+
+Users never see or type vehicle UUIDs. The public API contract exposes license plates wherever a user selects or filters a vehicle:
+
+- `POST /vehicles/:licensePlate/trip` — create a trip; backend resolves the plate to `vehicleId` internally.
+- `GET /trips?licensePlate=` — filter trips by plate; backend resolves internally.
+- Internal DB queries, relationships, and joins all continue to use `vehicleId`.
+- Frontend state and filter props use `licensePlate` (not `vehicleId`) for user-facing vehicle selection.
+
 ## Testing
 
 ### What to test

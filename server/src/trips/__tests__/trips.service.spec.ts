@@ -11,6 +11,7 @@ import {
   MOCK_TRIP_START,
   MOCK_VEHICLE,
   MOCK_VEHICLE_ID,
+  MOCK_VEHICLE_LICENSE_PLATE,
   prismaMock,
 } from '../../test/consts';
 import { VehiclesService } from '../../vehicles/vehicles.service';
@@ -18,7 +19,8 @@ import { TripsService } from '../trips.service';
 import { MOCK_CREATE_TRIP_DTO, MOCK_LIST_TRIPS_QUERY } from './consts';
 
 const vehiclesServiceMock = {
-  getVehicleById: jest.fn(),
+  getVehicleByLicensePlate: jest.fn(),
+  findVehicleByLicensePlate: jest.fn(),
 };
 
 describe('TripsService', () => {
@@ -39,11 +41,12 @@ describe('TripsService', () => {
 
   describe('createTrip', () => {
     it('when vehicle exists and data is valid should create and return the trip', async () => {
-      vehiclesServiceMock.getVehicleById.mockResolvedValue(MOCK_VEHICLE);
+      vehiclesServiceMock.getVehicleByLicensePlate.mockResolvedValue(MOCK_VEHICLE);
       prismaMock.trip.create.mockResolvedValue(MOCK_TRIP);
 
-      const result = await service.createTrip(MOCK_VEHICLE_ID, MOCK_CREATE_TRIP_DTO);
+      const result = await service.createTrip(MOCK_VEHICLE_LICENSE_PLATE, MOCK_CREATE_TRIP_DTO);
 
+      expect(vehiclesServiceMock.getVehicleByLicensePlate).toHaveBeenCalledWith(MOCK_VEHICLE_LICENSE_PLATE);
       expect(prismaMock.trip.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
@@ -58,16 +61,18 @@ describe('TripsService', () => {
     });
 
     it('when vehicle does not exist should throw NotFoundException', async () => {
-      vehiclesServiceMock.getVehicleById.mockRejectedValue(new NotFoundException());
+      vehiclesServiceMock.getVehicleByLicensePlate.mockRejectedValue(new NotFoundException());
 
-      await expect(service.createTrip(MOCK_VEHICLE_ID, MOCK_CREATE_TRIP_DTO)).rejects.toThrow(NotFoundException);
+      await expect(service.createTrip(MOCK_VEHICLE_LICENSE_PLATE, MOCK_CREATE_TRIP_DTO)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('when startedAt is equal to endedAt should throw BadRequestException', async () => {
-      vehiclesServiceMock.getVehicleById.mockResolvedValue(MOCK_VEHICLE);
+      vehiclesServiceMock.getVehicleByLicensePlate.mockResolvedValue(MOCK_VEHICLE);
 
       await expect(
-        service.createTrip(MOCK_VEHICLE_ID, {
+        service.createTrip(MOCK_VEHICLE_LICENSE_PLATE, {
           ...MOCK_CREATE_TRIP_DTO,
           startedAt: MOCK_TRIP_START,
           endedAt: MOCK_TRIP_START,
@@ -76,10 +81,10 @@ describe('TripsService', () => {
     });
 
     it('when startedAt is after endedAt should throw BadRequestException', async () => {
-      vehiclesServiceMock.getVehicleById.mockResolvedValue(MOCK_VEHICLE);
+      vehiclesServiceMock.getVehicleByLicensePlate.mockResolvedValue(MOCK_VEHICLE);
 
       await expect(
-        service.createTrip(MOCK_VEHICLE_ID, {
+        service.createTrip(MOCK_VEHICLE_LICENSE_PLATE, {
           ...MOCK_CREATE_TRIP_DTO,
           startedAt: MOCK_TRIP_END,
           endedAt: MOCK_TRIP_START,
@@ -88,10 +93,10 @@ describe('TripsService', () => {
     });
 
     it('should compute durationMinutes correctly and map Decimals to numbers', async () => {
-      vehiclesServiceMock.getVehicleById.mockResolvedValue(MOCK_VEHICLE);
+      vehiclesServiceMock.getVehicleByLicensePlate.mockResolvedValue(MOCK_VEHICLE);
       prismaMock.trip.create.mockResolvedValue(MOCK_TRIP);
 
-      const result = await service.createTrip(MOCK_VEHICLE_ID, MOCK_CREATE_TRIP_DTO);
+      const result = await service.createTrip(MOCK_VEHICLE_LICENSE_PLATE, MOCK_CREATE_TRIP_DTO);
 
       expect(prismaMock.trip.create).toHaveBeenCalledWith(
         expect.objectContaining({ data: expect.objectContaining({ durationMinutes: MOCK_TRIP_DURATION_MINUTES }) }),
@@ -114,15 +119,27 @@ describe('TripsService', () => {
       expect(result.limit).toBe(20);
     });
 
-    it('when vehicleId filter is applied should pass it to the where clause', async () => {
+    it('when licensePlate filter is applied should resolve vehicleId and pass it to the where clause', async () => {
+      vehiclesServiceMock.findVehicleByLicensePlate.mockResolvedValue(MOCK_VEHICLE);
       prismaMock.trip.findMany.mockResolvedValue([MOCK_TRIP]);
       prismaMock.trip.count.mockResolvedValue(1);
 
-      await service.listTrips({ ...MOCK_LIST_TRIPS_QUERY, vehicleId: MOCK_VEHICLE_ID });
+      await service.listTrips({ ...MOCK_LIST_TRIPS_QUERY, licensePlate: MOCK_VEHICLE_LICENSE_PLATE });
 
+      expect(vehiclesServiceMock.findVehicleByLicensePlate).toHaveBeenCalledWith(MOCK_VEHICLE_LICENSE_PLATE);
       expect(prismaMock.trip.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: expect.objectContaining({ vehicleId: MOCK_VEHICLE_ID }) }),
       );
+    });
+
+    it('when licensePlate filter does not match any vehicle should return empty results without querying trips', async () => {
+      vehiclesServiceMock.findVehicleByLicensePlate.mockResolvedValue(null);
+
+      const result = await service.listTrips({ ...MOCK_LIST_TRIPS_QUERY, licensePlate: 'UNKNOWN-PLATE' });
+
+      expect(result.data).toEqual([]);
+      expect(result.totalTrips).toBe(0);
+      expect(prismaMock.trip.findMany).not.toHaveBeenCalled();
     });
 
     it('when date range filter is applied should pass it to the where clause', async () => {
@@ -156,10 +173,11 @@ describe('TripsService', () => {
     });
 
     it('when no trips match should return empty data with total zero', async () => {
+      vehiclesServiceMock.findVehicleByLicensePlate.mockResolvedValue(MOCK_VEHICLE);
       prismaMock.trip.findMany.mockResolvedValue([]);
       prismaMock.trip.count.mockResolvedValue(0);
 
-      const result = await service.listTrips({ ...MOCK_LIST_TRIPS_QUERY, vehicleId: MOCK_VEHICLE_ID });
+      const result = await service.listTrips({ ...MOCK_LIST_TRIPS_QUERY, licensePlate: MOCK_VEHICLE_LICENSE_PLATE });
 
       expect(result.data).toEqual([]);
       expect(result.totalTrips).toBe(0);

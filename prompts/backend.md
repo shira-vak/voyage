@@ -84,3 +84,23 @@ Changes:
 7. All 46 tests pass, TypeScript clean.
 
 ---
+
+## 2026-06-17 16:20 - License plate as public API identifier + OpenAPI client generation
+
+Tool: Claude Sonnet 4.6
+
+Prompt:
+search for `Prompt 1 | Final 1st prompt: after my edits` in chat-prompts.md.
+
+Changes:
+
+1. Added `getVehicleByLicensePlate` (throws NotFoundException) and `findVehicleByLicensePlate` (returns null) to `VehiclesService`.
+2. Created `vehicles/dtos/vehicle-license-plate.dto.ts` (`VehicleLicensePlateDto`) for the route param.
+3. Changed `POST /vehicles/:vehicleId/trip` → `POST /vehicles/:licensePlate/trip`; backend resolves plate → internal vehicleId.
+4. Changed `ListTripsQueryDto.vehicleId` → `licensePlate` (string, no UUID constraint); `listTrips` resolves plate → vehicleId internally; returns empty if plate not found.
+5. Added `@ApiTags('Trips')` / `@ApiTags('Vehicles')` to both controllers so the generated client produces two separate service classes.
+6. Updated all tests: controller specs use `MOCK_VEHICLE_LICENSE_PLATE` in routes; service specs mock `getVehicleByLicensePlate` / `findVehicleByLicensePlate`; removed stale UUID-validation test for the trip route.
+7. Added `scripts/export-spec.ts` and `npm run api:export` to server — exports `openapi.json` to the repo root without running the full HTTP server.
+8. All 48 tests pass.
+
+---

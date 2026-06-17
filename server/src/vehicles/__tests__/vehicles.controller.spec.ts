@@ -2,7 +2,7 @@ import { INestApplication, NotFoundException, ValidationPipe } from '@nestjs/com
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { DecimalTransformInterceptor } from '../../common/decimal-transform.interceptor';
-import { INVALID_UUID, MOCK_VEHICLE, MOCK_VEHICLE_ID, MOCK_VEHICLE_SUMMARY } from '../../test/consts';
+import { MOCK_VEHICLE, MOCK_VEHICLE_ID, MOCK_VEHICLE_LICENSE_PLATE, MOCK_VEHICLE_SUMMARY } from '../../test/consts';
 import { VehiclesController } from '../vehicles.controller';
 import { VehiclesService } from '../vehicles.service';
 import { MOCK_CREATE_VEHICLE_DTO } from './consts';
@@ -10,7 +10,7 @@ import { MOCK_CREATE_VEHICLE_DTO } from './consts';
 const serviceMock = {
   createVehicle: jest.fn(),
   listVehicles: jest.fn(),
-  getVehicleById: jest.fn(),
+  getVehicleByLicensePlate: jest.fn(),
   getVehicleSummary: jest.fn(),
 };
 
@@ -68,32 +68,28 @@ describe('VehiclesController', () => {
     });
   });
 
-  describe('GET /vehicles/:vehicleId', () => {
+  describe('GET /vehicles/:licensePlate', () => {
     it('when vehicle exists should return 200 with the vehicle', async () => {
-      serviceMock.getVehicleById.mockResolvedValue(MOCK_VEHICLE);
+      serviceMock.getVehicleByLicensePlate.mockResolvedValue(MOCK_VEHICLE);
 
-      const res = await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_ID}`).expect(200);
+      const res = await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}`).expect(200);
 
       expect(res.body.id).toBe(MOCK_VEHICLE_ID);
-      expect(res.body.name).toBe(MOCK_VEHICLE.name);
+      expect(res.body.licensePlate).toBe(MOCK_VEHICLE_LICENSE_PLATE);
     });
 
     it('when vehicle does not exist should return 404', async () => {
-      serviceMock.getVehicleById.mockRejectedValue(new NotFoundException());
+      serviceMock.getVehicleByLicensePlate.mockRejectedValue(new NotFoundException());
 
-      await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_ID}`).expect(404);
-    });
-
-    it('when vehicleId is not a valid UUID should return 400', async () => {
-      await request(app.getHttpServer()).get(`/vehicles/${INVALID_UUID}`).expect(400);
+      await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}`).expect(404);
     });
   });
 
-  describe('GET /vehicles/:vehicleId/summary', () => {
+  describe('GET /vehicles/:licensePlate/summary', () => {
     it('when vehicle exists should return 200 with summary', async () => {
       serviceMock.getVehicleSummary.mockResolvedValue(MOCK_VEHICLE_SUMMARY);
 
-      const res = await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_ID}/summary`).expect(200);
+      const res = await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}/summary`).expect(200);
 
       expect(res.body.vehicle.id).toBe(MOCK_VEHICLE_ID);
       expect(res.body.tripCount).toBe(MOCK_VEHICLE_SUMMARY.tripCount);
@@ -102,11 +98,7 @@ describe('VehiclesController', () => {
     it('when vehicle does not exist should return 404', async () => {
       serviceMock.getVehicleSummary.mockRejectedValue(new NotFoundException());
 
-      await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_ID}/summary`).expect(404);
-    });
-
-    it('when vehicleId is not a valid UUID should return 400', async () => {
-      await request(app.getHttpServer()).get(`/vehicles/${INVALID_UUID}/summary`).expect(400);
+      await request(app.getHttpServer()).get(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}/summary`).expect(404);
     });
   });
 });

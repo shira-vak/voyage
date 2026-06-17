@@ -4,7 +4,7 @@ import type { ColumnsType } from 'antd/es/table';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import type { ListTripsQuery, TripResponse } from '../../api/types';
+import type { TripResponseDto } from '../../api/generated';
 import { useVehicles } from '../vehicles/useVehicles';
 import CreateTripModal from './CreateTripModal';
 import TripFilters from './TripFilters';
@@ -13,12 +13,12 @@ import { useTrips } from './useTrips';
 const PAGE_SIZE = 20;
 
 function buildQuery(
-  vehicleId: string | undefined,
+  licensePlate: string | undefined,
   dateRange: [Dayjs, Dayjs] | null,
   page: number,
-): ListTripsQuery {
+) {
   return {
-    ...(vehicleId && { vehicleId }),
+    ...(licensePlate && { licensePlate }),
     ...(dateRange && {
       startDate: dateRange[0].startOf('day').toISOString(),
       endDate: dateRange[1].endOf('day').toISOString(),
@@ -28,7 +28,7 @@ function buildQuery(
   };
 }
 
-const COLUMNS: ColumnsType<TripResponse> = [
+const COLUMNS: ColumnsType<TripResponseDto> = [
   {
     title: 'Started',
     dataIndex: 'startedAt',
@@ -63,7 +63,7 @@ const COLUMNS: ColumnsType<TripResponse> = [
   {
     title: 'Efficiency',
     key: 'efficiency',
-    render: (_: unknown, row: TripResponse) =>
+    render: (_: unknown, row: TripResponseDto) =>
       row.distanceKm > 0 ? (
         <Tag color='green'>{(row.distanceKm / row.fuelConsumed).toFixed(1)} km/L</Tag>
       ) : (
@@ -74,17 +74,17 @@ const COLUMNS: ColumnsType<TripResponse> = [
 ];
 
 export default function TripsPage(): React.ReactElement {
-  const [vehicleId, setVehicleId] = useState<string | undefined>(undefined);
+  const [licensePlate, setLicensePlate] = useState<string | undefined>(undefined);
   const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>(null);
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const query = buildQuery(vehicleId, dateRange, page);
+  const query = buildQuery(licensePlate, dateRange, page);
   const { result, loading, error, reload } = useTrips(query);
   const { vehicles } = useVehicles();
 
-  const handleFilterVehicle = (id: string | undefined): void => {
-    setVehicleId(id);
+  const handleFilterLicensePlate = (plate: string | undefined): void => {
+    setLicensePlate(plate);
     setPage(1);
   };
 
@@ -119,15 +119,15 @@ export default function TripsPage(): React.ReactElement {
 
       <TripFilters
         vehicles={vehicles}
-        vehicleId={vehicleId}
+        licensePlate={licensePlate}
         dateRange={dateRange}
-        onVehicleChange={handleFilterVehicle}
+        onLicensePlateChange={handleFilterLicensePlate}
         onDateRangeChange={handleFilterDateRange}
       />
 
       {error && <Alert type='error' message={error} showIcon />}
 
-      <Table<TripResponse>
+      <Table<TripResponseDto>
         rowKey='tripId'
         columns={COLUMNS}
         dataSource={result?.data ?? []}

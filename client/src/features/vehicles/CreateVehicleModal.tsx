@@ -1,6 +1,6 @@
 import { App, Form, Input, Modal } from 'antd';
 import { useState } from 'react';
-import { vehiclesApi } from '../../api/vehicles';
+import { VehiclesService } from '../../api/generated';
 
 interface FormValues {
   name: string;
@@ -26,7 +26,7 @@ export default function CreateVehicleModal({
     const values = await form.validateFields();
     setSubmitting(true);
     try {
-      await vehiclesApi.create(values);
+      await VehiclesService.vehiclesControllerCreateVehicle(values);
       void message.success(`Vehicle "${values.name}" added`);
       form.resetFields();
       onCreated();

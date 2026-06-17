@@ -80,19 +80,19 @@ describe('VehiclesService', () => {
     });
   });
 
-  describe('getVehicleById', () => {
+  describe('getVehicleByLicensePlate', () => {
     it('when vehicle exists should return it', async () => {
       prismaMock.vehicle.findUnique.mockResolvedValue(MOCK_VEHICLE);
 
-      const result = await service.getVehicleById(MOCK_VEHICLE_ID);
+      const result = await service.getVehicleByLicensePlate(MOCK_VEHICLE_LICENSE_PLATE);
 
-      expect(result.id).toBe(MOCK_VEHICLE_ID);
+      expect(result.licensePlate).toBe(MOCK_VEHICLE_LICENSE_PLATE);
     });
 
     it('when vehicle does not exist should throw NotFoundException', async () => {
       prismaMock.vehicle.findUnique.mockResolvedValue(null);
 
-      await expect(service.getVehicleById(MOCK_VEHICLE_ID)).rejects.toThrow(NotFoundException);
+      await expect(service.getVehicleByLicensePlate(MOCK_VEHICLE_LICENSE_PLATE)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -108,7 +108,7 @@ describe('VehiclesService', () => {
         _avg: { durationMinutes: MOCK_AVG_DURATION_MINUTES },
       });
 
-      const result = await service.getVehicleSummary(MOCK_VEHICLE_ID);
+      const result = await service.getVehicleSummary(MOCK_VEHICLE_LICENSE_PLATE);
 
       expect(result.vehicle.id).toBe(MOCK_VEHICLE_ID);
       expect(result.tripCount).toBe(MOCK_TRIP_COUNT);
@@ -125,7 +125,7 @@ describe('VehiclesService', () => {
         _avg: { durationMinutes: null },
       });
 
-      const result = await service.getVehicleSummary(MOCK_VEHICLE_ID);
+      const result = await service.getVehicleSummary(MOCK_VEHICLE_LICENSE_PLATE);
 
       expect(result.tripCount).toBe(0);
       expect(result.totalDistanceKm).toBe(0);
@@ -136,7 +136,7 @@ describe('VehiclesService', () => {
     it('when vehicle does not exist should throw NotFoundException', async () => {
       prismaMock.vehicle.findUnique.mockResolvedValue(null);
 
-      await expect(service.getVehicleSummary(MOCK_VEHICLE_ID)).rejects.toThrow(NotFoundException);
+      await expect(service.getVehicleSummary(MOCK_VEHICLE_LICENSE_PLATE)).rejects.toThrow(NotFoundException);
     });
   });
 });

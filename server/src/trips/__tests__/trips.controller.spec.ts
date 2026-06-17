@@ -2,7 +2,7 @@ import { INestApplication, NotFoundException, ValidationPipe } from '@nestjs/com
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { DecimalTransformInterceptor } from '../../common/decimal-transform.interceptor';
-import { INVALID_UUID, MOCK_TRIP_DISTANCE_KM, MOCK_TRIP_RESPONSE, MOCK_VEHICLE_ID } from '../../test/consts';
+import { MOCK_TRIP_DISTANCE_KM, MOCK_TRIP_RESPONSE, MOCK_VEHICLE_LICENSE_PLATE } from '../../test/consts';
 import { TripsController } from '../trips.controller';
 import { TripsService } from '../trips.service';
 import { MOCK_CREATE_TRIP_DTO } from './consts';
@@ -30,16 +30,16 @@ describe('TripsController', () => {
   beforeEach(() => jest.clearAllMocks());
   afterAll(() => app.close());
 
-  describe('POST /vehicles/:vehicleId/trip', () => {
+  describe('POST /vehicles/:licensePlate/trip', () => {
     it('when data is valid should return 201 with the created trip', async () => {
       serviceMock.createTrip.mockResolvedValue(MOCK_TRIP_RESPONSE);
 
       const res = await request(app.getHttpServer())
-        .post(`/vehicles/${MOCK_VEHICLE_ID}/trip`)
+        .post(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}/trip`)
         .send(MOCK_CREATE_TRIP_DTO)
         .expect(201);
 
-      expect(res.body.vehicleId).toBe(MOCK_VEHICLE_ID);
+      expect(res.body.vehicleId).toBe(MOCK_TRIP_RESPONSE.vehicleId);
       expect(res.body.distanceKm).toBe(MOCK_TRIP_DISTANCE_KM);
     });
 
@@ -47,13 +47,9 @@ describe('TripsController', () => {
       serviceMock.createTrip.mockRejectedValue(new NotFoundException());
 
       await request(app.getHttpServer())
-        .post(`/vehicles/${MOCK_VEHICLE_ID}/trip`)
+        .post(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}/trip`)
         .send(MOCK_CREATE_TRIP_DTO)
         .expect(404);
-    });
-
-    it('when vehicleId is not a valid UUID should return 400', async () => {
-      await request(app.getHttpServer()).post(`/vehicles/${INVALID_UUID}/trip`).send(MOCK_CREATE_TRIP_DTO).expect(400);
     });
 
     it.each([
@@ -78,7 +74,7 @@ describe('TripsController', () => {
       ['startedAt is not a date string', { ...MOCK_CREATE_TRIP_DTO, startedAt: 'not-a-date' }],
       ['an unknown field is sent', { ...MOCK_CREATE_TRIP_DTO, extra: 'x' }],
     ])('when %s should return 400', async (_label, body) => {
-      await request(app.getHttpServer()).post(`/vehicles/${MOCK_VEHICLE_ID}/trip`).send(body).expect(400);
+      await request(app.getHttpServer()).post(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}/trip`).send(body).expect(400);
     });
   });
 
@@ -96,10 +92,12 @@ describe('TripsController', () => {
       expect(res.body.page).toBe(page);
     });
 
-    it('when vehicleId filter is applied should return 200', async () => {
+    it('when licensePlate filter is applied should return 200', async () => {
       serviceMock.listTrips.mockResolvedValue({ data: [MOCK_TRIP_RESPONSE], totalTrips: 1, page: 1, limit: 20 });
 
-      const res = await request(app.getHttpServer()).get(`/trips?vehicleId=${MOCK_VEHICLE_ID}`).expect(200);
+      const res = await request(app.getHttpServer())
+        .get(`/trips?licensePlate=${MOCK_VEHICLE_LICENSE_PLATE}`)
+        .expect(200);
 
       expect(res.body.data).toHaveLength(1);
     });
@@ -119,10 +117,6 @@ describe('TripsController', () => {
 
     it('when limit exceeds 100 should return 400', async () => {
       await request(app.getHttpServer()).get('/trips?limit=101').expect(400);
-    });
-
-    it('when vehicleId is not a valid UUID should return 400', async () => {
-      await request(app.getHttpServer()).get(`/trips?vehicleId=${INVALID_UUID}`).expect(400);
     });
   });
 });

@@ -1,20 +1,20 @@
 import { DatePicker, Select, Space } from 'antd';
 import type { Dayjs } from 'dayjs';
-import type { VehicleResponse } from '../../api/types';
+import type { VehicleResponseDto } from '../../api/generated';
 
 interface TripFiltersProps {
-  vehicles: VehicleResponse[];
-  vehicleId: string | undefined;
+  vehicles: VehicleResponseDto[];
+  licensePlate: string | undefined;
   dateRange: [Dayjs, Dayjs] | null;
-  onVehicleChange: (id: string | undefined) => void;
+  onLicensePlateChange: (plate: string | undefined) => void;
   onDateRangeChange: (range: [Dayjs, Dayjs] | null) => void;
 }
 
 export default function TripFilters({
   vehicles,
-  vehicleId,
+  licensePlate,
   dateRange,
-  onVehicleChange,
+  onLicensePlateChange,
   onDateRangeChange,
 }: TripFiltersProps): React.ReactElement {
   return (
@@ -22,10 +22,10 @@ export default function TripFilters({
       <Select
         allowClear
         placeholder='All vehicles'
-        value={vehicleId}
-        onChange={onVehicleChange}
+        value={licensePlate}
+        onChange={onLicensePlateChange}
         style={{ minWidth: 200 }}
-        options={vehicles.map((v) => ({ value: v.id, label: `${v.name} — ${v.licensePlate}` }))}
+        options={vehicles.map((v) => ({ value: v.licensePlate, label: `${v.name} — ${v.licensePlate}` }))}
       />
 
       <DatePicker.RangePicker

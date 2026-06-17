@@ -1,11 +1,11 @@
 import { App, DatePicker, Form, InputNumber, Modal, Select } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { useState } from 'react';
-import { tripsApi } from '../../api/trips';
-import type { VehicleResponse } from '../../api/types';
+import type { VehicleResponseDto } from '../../api/generated';
+import { TripsService } from '../../api/generated';
 
 interface FormValues {
-  vehicleId: string;
+  licensePlate: string;
   dateRange: [Dayjs, Dayjs];
   distanceKm: number;
   fuelConsumed: number;
@@ -13,8 +13,8 @@ interface FormValues {
 
 interface CreateTripModalProps {
   open: boolean;
-  vehicles: VehicleResponse[];
-  preselectedVehicleId?: string;
+  vehicles: VehicleResponseDto[];
+  preselectedLicensePlate?: string;
   onClose: () => void;
   onCreated: () => void;
 }
@@ -22,7 +22,7 @@ interface CreateTripModalProps {
 export default function CreateTripModal({
   open,
   vehicles,
-  preselectedVehicleId,
+  preselectedLicensePlate,
   onClose,
   onCreated,
 }: CreateTripModalProps): React.ReactElement {
@@ -34,7 +34,7 @@ export default function CreateTripModal({
     const values = await form.validateFields();
     setSubmitting(true);
     try {
-      await tripsApi.create(values.vehicleId, {
+      await TripsService.tripsControllerCreateTrip(values.licensePlate, {
         startedAt: values.dateRange[0].toISOString(),
         endedAt: values.dateRange[1].toISOString(),
         distanceKm: values.distanceKm,
@@ -69,12 +69,12 @@ export default function CreateTripModal({
         form={form}
         layout='vertical'
         style={{ marginTop: 16 }}
-        initialValues={{ vehicleId: preselectedVehicleId }}
+        initialValues={{ licensePlate: preselectedLicensePlate }}
       >
-        <Form.Item name='vehicleId' label='Vehicle' rules={[{ required: true, message: 'Select a vehicle' }]}>
+        <Form.Item name='licensePlate' label='Vehicle' rules={[{ required: true, message: 'Select a vehicle' }]}>
           <Select
             placeholder='Select vehicle'
-            options={vehicles.map((v) => ({ value: v.id, label: `${v.name} — ${v.licensePlate}` }))}
+            options={vehicles.map((v) => ({ value: v.licensePlate, label: `${v.name} — ${v.licensePlate}` }))}
           />
         </Form.Item>
 

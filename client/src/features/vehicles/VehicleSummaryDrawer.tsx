@@ -1,33 +1,32 @@
 import { CarOutlined, ClockCircleOutlined, DashboardOutlined, FireOutlined } from '@ant-design/icons';
 import { Alert, Descriptions, Drawer, Skeleton, Statistic, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import { vehiclesApi } from '../../api/vehicles';
-import type { VehicleSummaryResponse } from '../../api/types';
+import type { VehicleSummaryDto } from '../../api/generated';
+import { VehiclesService } from '../../api/generated';
 
 interface VehicleSummaryDrawerProps {
-  vehicleId: string | null;
+  licensePlate: string | null;
   onClose: () => void;
 }
 
 export default function VehicleSummaryDrawer({
-  vehicleId,
+  licensePlate,
   onClose,
 }: VehicleSummaryDrawerProps): React.ReactElement {
-  const [summary, setSummary] = useState<VehicleSummaryResponse | null>(null);
+  const [summary, setSummary] = useState<VehicleSummaryDto | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!vehicleId) return;
+    if (!licensePlate) return;
     setLoading(true);
     setError(null);
     setSummary(null);
-    vehiclesApi
-      .getSummary(vehicleId)
+    VehiclesService.vehiclesControllerGetVehicleSummary(licensePlate)
       .then(setSummary)
       .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Failed to load summary'))
       .finally(() => setLoading(false));
-  }, [vehicleId]);
+  }, [licensePlate]);
 
   const avgH = Math.floor((summary?.averageDurationMinutes ?? 0) / 60);
   const avgM = (summary?.averageDurationMinutes ?? 0) % 60;
@@ -41,7 +40,7 @@ export default function VehicleSummaryDrawer({
           <span>{summary?.vehicle.name ?? 'Vehicle Summary'}</span>
         </div>
       }
-      open={!!vehicleId}
+      open={!!licensePlate}
       onClose={onClose}
       width={420}
     >

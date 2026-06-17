@@ -328,3 +328,92 @@ no dead code
 no obvious duplication
 
 Update CLAUDE.md with any newly established frontend and architecture conventions.
+
+##### Prompt 1 | FollowUp: 
+[the no 2 point from the 1st prop] i am worried it will interprate it as removiing the vehicle id completly - i just want it to let the api use the licence plate as id but intenally use the vehicle id.
+
+##### Prompt 1 | Response:
+2. Vehicle lookup strategy
+
+The database model should continue using Vehicle.id as the internal primary key and relationship key.
+
+Do not remove vehicleId from the database schema, Prisma models, entity relationships, repositories, or internal business logic.
+
+The change is only for the public API contract and frontend user experience.
+
+Requirements:
+
+* Keep Vehicle.id as the internal identifier.
+* Keep Trip -> Vehicle relationships based on vehicleId.
+* Keep all database joins, aggregations, and queries using vehicleId internally.
+* Users should never need to know or provide a vehicle ID.
+* Trip creation should accept a vehicle license plate instead of a vehicle ID.
+* Trip filtering should allow filtering by vehicle license plate instead of vehicle ID.
+* The backend should resolve the license plate to the corresponding vehicle internally and continue operating on vehicleId.
+* OpenAPI definitions, generated client types, DTOs, and frontend forms should expose license plates rather than vehicle IDs wherever the user selects or filters a vehicle.
+* Preserve existing functionality and data integrity.
+
+##### Prompt 1 | Final 1st prompt: after my edits
+Read the assignment and CLAUDE.md before making any changes.
+
+The current application is already in a good state. The goal is to improve correctness and alignment with the project requirements while preserving the existing UI and user experience.
+
+Important:
+
+* Do not redesign the application.
+* Do not perform unrelated refactors.
+* Keep all existing behavior unless explicitly requested below.
+* If a frontend change requires backend changes, update both sides.
+* After making changes, verify that the application builds and functions correctly.
+
+Required changes:
+
+1. OpenAPI-generated client
+
+The frontend must not manually define backend request/response types.
+
+Generate and use a typed API client from the backend OpenAPI specification using openapi-typescript-codegen as required by CLAUDE.md.
+
+Requirements:
+
+* Add a script for client generation.
+* Generate API services and types.
+* Replace manually written API contracts and duplicated DTO types.
+* Ensure frontend API usage is based on generated services and generated models.
+
+Make sure all the generated logic is in the client folder - generating api is not related to server it just suppose to use the server api via its url.
+There should be a clear script in package,json to generate the api. and the generated code should sit in a api folder under src.
+
+2. Vehicle lookup strategy
+
+The database model should continue using Vehicle.id as the internal primary key and relationship key.
+
+Do not remove vehicleId from the database schema, Prisma models, entity relationships, repositories, or internal business logic.
+
+The change is only for the public API contract and frontend user experience.
+
+Requirements:
+
+* Keep Vehicle.id as the internal identifier.
+* Keep Trip -> Vehicle relationships based on vehicleId.
+* Keep all database joins, aggregations, and queries using vehicleId internally.
+* Users should never need to know or provide a vehicle ID.
+* Trip creation should accept a vehicle license plate instead of a vehicle ID.
+* Trip filtering should allow filtering by vehicle license plate instead of vehicle ID.
+* The backend should resolve the license plate to the corresponding vehicle internally and continue operating on vehicleId.
+* OpenAPI definitions, generated client types, DTOs, and frontend forms should expose license plates rather than vehicle IDs wherever the user selects or filters a vehicle.
+* Preserve existing functionality and data integrity.
+
+3. General correctness
+
+Fix all console warnings, deprecated APIs, promise-related warnings, and TypeScript issues in both frontend and backend.
+
+4. Documentation
+
+Update CLAUDE.md with any new project conventions introduced by these changes.
+
+Keep the implementation clean, strongly typed, and consistent with the existing architecture.
+
+
+
+----
