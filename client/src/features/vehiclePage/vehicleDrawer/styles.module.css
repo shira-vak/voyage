@@ -8,13 +8,13 @@
   color: var(--ant-color-primary);
 }
 
-.content {
+.drawerContent {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
 }
 
-.statsGrid {
+.drawerStatsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-md);

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { VehicleResponseDto } from '../../api/generated';
-import { VehiclesService } from '../../api/generated';
+import type { VehicleResponseDto } from '../../../api/generated';
+import { VehiclesService } from '../../../api/generated';
 
 interface UseVehiclesResult {
   vehicles: VehicleResponseDto[];

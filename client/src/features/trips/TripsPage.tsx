@@ -1,19 +1,19 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Alert, Button, Table, Tag } from 'antd';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
-import type { Dayjs } from 'dayjs';
-import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import type { TripResponseDto, VehicleResponseDto } from '../../api/generated';
-import PageHeader from '../../components/PageHeader/PageHeader';
-import { useVehicles } from '../vehicles/useVehicles';
-import CreateTripModal from './CreateTripModal';
-import TripFilters from './TripFilters';
-import { DATETIME_FORMAT, DECIMAL_PRECISION, TRIPS_PAGE_SIZE } from './consts';
-import styles from './styles.module.css';
-import type { TripsQuery } from './types';
-import { useTrips } from './useTrips';
+import { PlusOutlined } from "@ant-design/icons";
+import { Alert, Button, Table, Tag } from "antd";
+import type { ColumnsType, ColumnType } from "antd/es/table";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { TripResponseDto, VehicleResponseDto } from "../../api/generated";
+import PageHeader from "../appLayout/common/PageHeader";
+import { useVehicles } from "../vehiclePage/hooks/useVehicles";
+import CreateTripModal from "./CreateTripModal";
+import TripFilters from "./TripFilters";
+import { DATETIME_FORMAT, DECIMAL_PRECISION, TRIPS_PAGE_SIZE } from "./consts";
+import styles from "./styles.module.css";
+import type { TripsQuery } from "./types";
+import { useTrips } from "./useTrips";
 
 function buildQuery(
   licensePlate: string | undefined,
@@ -23,8 +23,8 @@ function buildQuery(
 ): TripsQuery {
   return {
     ...(licensePlate && { licensePlate }),
-    ...(startDate && { startDate: startDate.startOf('day').toISOString() }),
-    ...(endDate && { endDate: endDate.endOf('day').toISOString() }),
+    ...(startDate && { startDate: startDate.startOf("day").toISOString() }),
+    ...(endDate && { endDate: endDate.endOf("day").toISOString() }),
     page,
     limit: TRIPS_PAGE_SIZE,
   };
@@ -34,35 +34,38 @@ function buildColumns(
   vehicleMap: Map<string, VehicleResponseDto>,
   t: (key: string) => string,
 ): ColumnsType<TripResponseDto> {
-  const sorterNum = (key: keyof TripResponseDto) =>
-    (a: TripResponseDto, b: TripResponseDto) => (a[key] as number) - (b[key] as number);
+  const sorterNum =
+    (key: keyof TripResponseDto) => (a: TripResponseDto, b: TripResponseDto) =>
+      (a[key] as number) - (b[key] as number);
 
-  const sorterDate = (key: keyof TripResponseDto) =>
-    (a: TripResponseDto, b: TripResponseDto) =>
-      new Date(a[key] as string).getTime() - new Date(b[key] as string).getTime();
+  const sorterDate =
+    (key: keyof TripResponseDto) => (a: TripResponseDto, b: TripResponseDto) =>
+      new Date(a[key] as string).getTime() -
+      new Date(b[key] as string).getTime();
 
   const vehicleNameCol: ColumnType<TripResponseDto> = {
-    title: t('trips.columns.vehicleName'),
-    key: 'vehicleName',
+    title: t("trips.columns.vehicleName"),
+    key: "vehicleName",
     sorter: (a, b) => {
-      const nameA = vehicleMap.get(a.vehicleId)?.name ?? '';
-      const nameB = vehicleMap.get(b.vehicleId)?.name ?? '';
+      const nameA = vehicleMap.get(a.vehicleId)?.name ?? "";
+      const nameB = vehicleMap.get(b.vehicleId)?.name ?? "";
       return nameA.localeCompare(nameB);
     },
-    render: (_: unknown, row: TripResponseDto) => vehicleMap.get(row.vehicleId)?.name ?? '—',
+    render: (_: unknown, row: TripResponseDto) =>
+      vehicleMap.get(row.vehicleId)?.name ?? "—",
   };
 
   const licensePlateCol: ColumnType<TripResponseDto> = {
-    title: t('trips.columns.licensePlate'),
-    key: 'licensePlate',
+    title: t("trips.columns.licensePlate"),
+    key: "licensePlate",
     sorter: (a, b) => {
-      const plateA = vehicleMap.get(a.vehicleId)?.licensePlate ?? '';
-      const plateB = vehicleMap.get(b.vehicleId)?.licensePlate ?? '';
+      const plateA = vehicleMap.get(a.vehicleId)?.licensePlate ?? "";
+      const plateB = vehicleMap.get(b.vehicleId)?.licensePlate ?? "";
       return plateA.localeCompare(plateB);
     },
     render: (_: unknown, row: TripResponseDto) => {
       const plate = vehicleMap.get(row.vehicleId)?.licensePlate;
-      return plate ? <Tag color='green'>{plate}</Tag> : '—';
+      return plate ? <Tag color="green">{plate}</Tag> : "—";
     },
   };
 
@@ -70,9 +73,9 @@ function buildColumns(
     vehicleNameCol,
     licensePlateCol,
     {
-      title: t('trips.columns.duration'),
-      dataIndex: 'durationMinutes',
-      sorter: sorterNum('durationMinutes'),
+      title: t("trips.columns.duration"),
+      dataIndex: "durationMinutes",
+      sorter: sorterNum("durationMinutes"),
       render: (v: number) => {
         const h = Math.floor(v / 60);
         const m = v % 60;
@@ -80,42 +83,44 @@ function buildColumns(
       },
     },
     {
-      title: t('trips.columns.distanceKm'),
-      dataIndex: 'distanceKm',
-      sorter: sorterNum('distanceKm'),
+      title: t("trips.columns.distanceKm"),
+      dataIndex: "distanceKm",
+      sorter: sorterNum("distanceKm"),
       render: (v: number) => v.toFixed(1),
-      align: 'right',
+      align: "right",
     },
     {
-      title: t('trips.columns.fuel'),
-      dataIndex: 'fuelConsumed',
-      sorter: sorterNum('fuelConsumed'),
+      title: t("trips.columns.fuel"),
+      dataIndex: "fuelConsumed",
+      sorter: sorterNum("fuelConsumed"),
       render: (v: number) => `${v.toFixed(DECIMAL_PRECISION)} L`,
-      align: 'right',
+      align: "right",
     },
     {
-      title: t('trips.columns.efficiency'),
-      key: 'efficiency',
+      title: t("trips.columns.efficiency"),
+      key: "efficiency",
       sorter: (a: TripResponseDto, b: TripResponseDto) =>
         a.distanceKm / a.fuelConsumed - b.distanceKm / b.fuelConsumed,
       render: (_: unknown, row: TripResponseDto) =>
         row.distanceKm > 0 ? (
-          <Tag color='green'>{(row.distanceKm / row.fuelConsumed).toFixed(1)} km/L</Tag>
+          <Tag color="green">
+            {(row.distanceKm / row.fuelConsumed).toFixed(1)} km/L
+          </Tag>
         ) : (
-          '—'
+          "—"
         ),
-      align: 'right',
+      align: "right",
     },
     {
-      title: t('trips.columns.started'),
-      dataIndex: 'startedAt',
-      sorter: sorterDate('startedAt'),
+      title: t("trips.columns.started"),
+      dataIndex: "startedAt",
+      sorter: sorterDate("startedAt"),
       render: (v: string) => dayjs(v).format(DATETIME_FORMAT),
     },
     {
-      title: t('trips.columns.ended'),
-      dataIndex: 'endedAt',
-      sorter: sorterDate('endedAt'),
+      title: t("trips.columns.ended"),
+      dataIndex: "endedAt",
+      sorter: sorterDate("endedAt"),
       render: (v: string) => dayjs(v).format(DATETIME_FORMAT),
     },
   ];
@@ -123,7 +128,9 @@ function buildColumns(
 
 export default function TripsPage(): React.ReactElement {
   const { t } = useTranslation();
-  const [licensePlate, setLicensePlate] = useState<string | undefined>(undefined);
+  const [licensePlate, setLicensePlate] = useState<string | undefined>(
+    undefined,
+  );
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [page, setPage] = useState(1);
@@ -163,10 +170,14 @@ export default function TripsPage(): React.ReactElement {
   return (
     <div className={styles.page}>
       <PageHeader
-        title={t('trips.title')}
+        title={t("trips.title")}
         action={
-          <Button type='primary' icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
-            {t('trips.recordTrip')}
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setModalOpen(true)}
+          >
+            {t("trips.recordTrip")}
           </Button>
         }
       />
@@ -183,25 +194,32 @@ export default function TripsPage(): React.ReactElement {
         />
       </div>
 
-      {error && <Alert type='error' message={error} showIcon style={{ flexShrink: 0 }} />}
+      {error && (
+        <Alert
+          type="error"
+          message={error}
+          showIcon
+          style={{ flexShrink: 0 }}
+        />
+      )}
 
       <div className={styles.tableWrapper}>
         <Table<TripResponseDto>
-          rowKey='tripId'
+          rowKey="tripId"
           columns={columns}
           dataSource={result?.data ?? []}
           loading={loading}
-          scroll={{ y: 'calc(100vh - 320px)', x: 'max-content' }}
+          scroll={{ y: "calc(100vh - 320px)", x: "max-content" }}
           pagination={{
             current: page,
             pageSize: TRIPS_PAGE_SIZE,
             total: result?.totalTrips ?? 0,
             onChange: setPage,
             showSizeChanger: false,
-            showTotal: (total) => t('trips.totalCount', { count: total }),
+            showTotal: (total) => t("trips.totalCount", { count: total }),
           }}
-          locale={{ emptyText: t('trips.noTrips') }}
-          size='middle'
+          locale={{ emptyText: t("trips.noTrips") }}
+          size="middle"
         />
       </div>
 

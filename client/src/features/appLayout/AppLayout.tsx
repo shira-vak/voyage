@@ -2,7 +2,7 @@ import { Layout, Menu } from "antd";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
-import AppBranding from "../AppBranding/AppBranding";
+import AppBranding from "./AppBranding";
 import styles from "./styles.module.css";
 
 const { Header, Content } = Layout;

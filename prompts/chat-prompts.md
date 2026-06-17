@@ -595,3 +595,14 @@ Update CLAUDE.md with any newly established frontend and architecture convention
 
 ----
 
+## 2026-06-17 10:10 - Seperation in component logic
+
+#### Tool: chatGPT GPT-5.5
+
+#### Prompt:
+[the generated createVehicleModal.tsx file] - seperate the code to make it cleanand easier to understand. thx
+
+(Later i used the same chat with the memory of seperate the code - just to make things faster to create new components also with the vehicle card and drawer).
+
+#### Result:
+It seperated the logic into a costume hook and shorter modal file.

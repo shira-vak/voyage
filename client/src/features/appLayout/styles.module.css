@@ -42,3 +42,21 @@
   display: flex;
   flex-direction: column;
 }
+
+.branding {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.brandingIcon {
+  font-size: 22px;
+  color: var(--ant-color-primary);
+}
+
+.brandingTitle {
+  font-size: 18px !important;
+  color: var(--ant-color-primary) !important;
+  letter-spacing: -0.3px;
+}

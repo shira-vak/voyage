@@ -1,4 +1,4 @@
-.header {
+.pageHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -7,6 +7,6 @@
   flex-shrink: 0;
 }
 
-.title {
+.pageTitle {
   margin: 0 !important;
 }

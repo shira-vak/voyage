@@ -9,8 +9,8 @@ interface PageHeaderProps {
 
 export default function PageHeader({ title, action }: PageHeaderProps): React.ReactElement {
   return (
-    <div className={styles.header}>
-      <Typography.Title level={3} className={styles.title}>
+    <div className={styles.pageHeader}>
+      <Typography.Title level={3} className={styles.pageTitle}>
         {title}
       </Typography.Title>
       {action}
