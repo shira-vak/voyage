@@ -414,6 +414,88 @@ Update CLAUDE.md with any new project conventions introduced by these changes.
 
 Keep the implementation clean, strongly typed, and consistent with the existing architecture.
 
+##### Prompt 2 | Final 2nd prompt: after my edits
+Read the assignment and CLAUDE.md before making any changes.
 
+The current UI is already visually strong.
+
+Important:
+
+* Preserve the current design and look-and-feel.
+* Do not redesign screens.
+* Only make the changes explicitly requested below.
+* Keep existing interactions whenever possible.
+
+Required changes:
+
+1. Vehicle cards
+
+In the Vehicles section:
+
+* Display the license plate as the primary title (keep it in a tag - for visual prefrences).
+* Display the vehicle name as the secondary text.
+* Only switch the presentation order. Do not redesign the card.
+
+2. Trip creation dialog
+
+The date selection experience needs improvement. the date selection is cut in the default 100% view (the buttom part of the date with the ok button are out of frame)
+
+Requirements:
+
+* The date picker must fit within the modal/dialog viewport.
+* All controls must remain accessible.
+* Users must always be able to reach the confirmation controls.
+* Preserve the existing date-selection flow and behavior where possible.
+
+3. Trips table columns
+
+Update column order to:
+
+* Vehicle Name
+* License Plate
+* Duration
+* Distance (km)
+* Fuel / Energy
+* Efficiency
+* Started
+* Ended
+
+4. Trips filtering
+
+The current filtering experience should be moved closer to the table itself.
+
+Requirements:
+
+* Support filtering by JUST start date.
+* Support filtering by JUST end date.
+* Allow filtering range between two dates.
+* Support filtering by vehicle license plate.
+* Integrate filtering naturally with the table experience.
+
+5. Sorting
+
+Add table sorting support where appropriate using Ant Design table capabilities.
+
+6. Scrolling behavior
+
+The page currently scrolls as a whole.
+
+Requirements:
+
+* Toolbar/header areas should remain visible.
+* Primary action buttons should remain visible.
+* Table controls should remain visible.
+* Scroll should be limited to content areas such as:
+
+  * vehicle lists (vehicle cards)
+  * trip tables
+
+The goal is to improve usability without changing the visual design.
+
+Verify that all interactions continue to work correctly after implementation. And make sure no console errors in f12 and vite errors.
+
+
+##### Prompt 3 | Final 3rd prompt: after my edits
 
 ----
+

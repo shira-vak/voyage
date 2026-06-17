@@ -5,17 +5,21 @@ import type { VehicleResponseDto } from '../../api/generated';
 interface TripFiltersProps {
   vehicles: VehicleResponseDto[];
   licensePlate: string | undefined;
-  dateRange: [Dayjs, Dayjs] | null;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
   onLicensePlateChange: (plate: string | undefined) => void;
-  onDateRangeChange: (range: [Dayjs, Dayjs] | null) => void;
+  onStartDateChange: (date: Dayjs | null) => void;
+  onEndDateChange: (date: Dayjs | null) => void;
 }
 
 export default function TripFilters({
   vehicles,
   licensePlate,
-  dateRange,
+  startDate,
+  endDate,
   onLicensePlateChange,
-  onDateRangeChange,
+  onStartDateChange,
+  onEndDateChange,
 }: TripFiltersProps): React.ReactElement {
   return (
     <Space wrap>
@@ -28,11 +32,18 @@ export default function TripFilters({
         options={vehicles.map((v) => ({ value: v.licensePlate, label: `${v.name} — ${v.licensePlate}` }))}
       />
 
-      <DatePicker.RangePicker
-        value={dateRange}
-        onChange={(val) => onDateRangeChange(val as [Dayjs, Dayjs] | null)}
+      <DatePicker
+        value={startDate}
+        onChange={onStartDateChange}
         format='YYYY-MM-DD'
-        placeholder={['Start date', 'End date']}
+        placeholder='From date'
+      />
+
+      <DatePicker
+        value={endDate}
+        onChange={onEndDateChange}
+        format='YYYY-MM-DD'
+        placeholder='To date'
       />
     </Space>
   );

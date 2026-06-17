@@ -19,7 +19,7 @@ export default function AppLayout({ children }: AppLayoutProps): React.ReactElem
   const location = useLocation();
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ height: '100vh', overflow: 'hidden' }}>
       <Header
         style={{
           display: 'flex',
@@ -49,8 +49,21 @@ export default function AppLayout({ children }: AppLayoutProps): React.ReactElem
         />
       </Header>
 
-      <Content style={{ padding: '32px 40px', maxWidth: 1200, width: '100%', margin: '0 auto' }}>
-        {children}
+      <Content style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div
+          style={{
+            padding: '32px 40px',
+            maxWidth: 1200,
+            width: '100%',
+            margin: '0 auto',
+            flex: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {children}
+        </div>
       </Content>
     </Layout>
   );

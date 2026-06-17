@@ -22,12 +22,12 @@ function VehicleCard({
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <Typography.Text strong style={{ fontSize: 16 }}>
+          <div style={{ marginBottom: 4 }}>
+            <Tag color='green' style={{ fontSize: 14, padding: '2px 8px' }}>{vehicle.licensePlate}</Tag>
+          </div>
+          <Typography.Text type='secondary' style={{ fontSize: 14 }}>
             {vehicle.name}
           </Typography.Text>
-          <div style={{ marginTop: 4 }}>
-            <Tag color='green'>{vehicle.licensePlate}</Tag>
-          </div>
         </div>
         <Typography.Text type='secondary' style={{ fontSize: 12 }}>
           Added {dayjs(vehicle.createdAt).format('MMM D, YYYY')}
@@ -46,7 +46,7 @@ export default function VehiclesPage(): React.ReactElement {
   const [selectedLicensePlate, setSelectedLicensePlate] = useState<string | null>(null);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 20, overflow: 'hidden' }}>
       <div
         style={{
           display: 'flex',
@@ -54,6 +54,7 @@ export default function VehiclesPage(): React.ReactElement {
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 12,
+          flexShrink: 0,
         }}
       >
         <Typography.Title level={3} style={{ margin: 0 }}>
@@ -64,8 +65,9 @@ export default function VehiclesPage(): React.ReactElement {
         </Button>
       </div>
 
-      {error && <Alert type='error' message={error} showIcon />}
+      {error && <Alert type='error' message={error} showIcon style={{ flexShrink: 0 }} />}
 
+      <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
       {loading && (
         <Row gutter={[16, 16]}>
           {[1, 2, 3].map((n) => (
@@ -91,6 +93,7 @@ export default function VehiclesPage(): React.ReactElement {
           ))}
         </Row>
       )}
+      </div>
 
       <CreateVehicleModal
         open={createOpen}

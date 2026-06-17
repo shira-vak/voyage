@@ -26,13 +26,13 @@ export function useTrips(query: TripsQuery): UseTripsResult {
     setLoading(true);
     setError(null);
     try {
-      const data = await TripsService.tripsControllerListTrips(
-        query.licensePlate,
-        query.startDate,
-        query.endDate,
-        query.page,
-        query.limit,
-      );
+      const data = await TripsService.tripsControllerListTrips({
+        licensePlate: query.licensePlate,
+        startDate: query.startDate,
+        endDate: query.endDate,
+        page: query.page,
+        limit: query.limit,
+      });
       setResult(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load trips');

@@ -6,7 +6,8 @@ import { TripsService } from '../../api/generated';
 
 interface FormValues {
   licensePlate: string;
-  dateRange: [Dayjs, Dayjs];
+  startedAt: Dayjs;
+  endedAt: Dayjs;
   distanceKm: number;
   fuelConsumed: number;
 }
@@ -34,11 +35,14 @@ export default function CreateTripModal({
     const values = await form.validateFields();
     setSubmitting(true);
     try {
-      await TripsService.tripsControllerCreateTrip(values.licensePlate, {
-        startedAt: values.dateRange[0].toISOString(),
-        endedAt: values.dateRange[1].toISOString(),
-        distanceKm: values.distanceKm,
-        fuelConsumed: values.fuelConsumed,
+      await TripsService.tripsControllerCreateTrip({
+        licensePlate: values.licensePlate,
+        requestBody: {
+          startedAt: values.startedAt.toISOString(),
+          endedAt: values.endedAt.toISOString(),
+          distanceKm: values.distanceKm,
+          fuelConsumed: values.fuelConsumed,
+        },
       });
       void message.success('Trip recorded successfully');
       form.resetFields();
@@ -79,11 +83,19 @@ export default function CreateTripModal({
         </Form.Item>
 
         <Form.Item
-          name='dateRange'
-          label='Start & End Time'
-          rules={[{ required: true, message: 'Select start and end time' }]}
+          name='startedAt'
+          label='Start Time'
+          rules={[{ required: true, message: 'Select start time' }]}
         >
-          <DatePicker.RangePicker showTime format='YYYY-MM-DD HH:mm' style={{ width: '100%' }} />
+          <DatePicker showTime format='YYYY-MM-DD HH:mm' style={{ width: '100%' }} />
+        </Form.Item>
+
+        <Form.Item
+          name='endedAt'
+          label='End Time'
+          rules={[{ required: true, message: 'Select end time' }]}
+        >
+          <DatePicker showTime format='YYYY-MM-DD HH:mm' style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item
