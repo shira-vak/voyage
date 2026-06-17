@@ -1,10 +1,9 @@
-import { App, DatePicker, Form, InputNumber, Modal, Select } from 'antd';
-import { useState } from 'react';
+import { DatePicker, Form, InputNumber, Modal, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
-import type { VehicleResponseDto } from '../../api/generated';
-import { TripsService } from '../../api/generated';
-import { DATETIME_FORMAT, DECIMAL_PRECISION, MIN_POSITIVE_VALUE } from './consts';
-import type { TripFormValues } from './types';
+import type { VehicleResponseDto } from '../../../api/generated';
+import { DATETIME_FORMAT, DECIMAL_PRECISION, MIN_POSITIVE_VALUE } from '../consts';
+import { useCreateTripModal } from '../hooks/useCreateTripModal';
+import type { TripFormValues } from '../types';
 
 interface CreateTripModalProps {
   open: boolean;
@@ -22,61 +21,33 @@ export default function CreateTripModal({
   onCreated,
 }: CreateTripModalProps): React.ReactElement {
   const { t } = useTranslation();
-  const { message } = App.useApp();
   const [form] = Form.useForm<TripFormValues>();
-  const [submitting, setSubmitting] = useState(false);
+
+  const { submitting, submit, close } = useCreateTripModal({ form, onCreated, onClose });
 
   const vehicleOptions = vehicles.map((v) => ({
     value: v.licensePlate,
     label: `${v.name} — ${v.licensePlate}`,
   }));
 
-  const handleSubmit = async (): Promise<void> => {
-    const values = await form.validateFields();
-    setSubmitting(true);
-    try {
-      await TripsService.tripsControllerCreateTrip({
-        licensePlate: values.licensePlate,
-        requestBody: {
-          startedAt: values.startedAt.toISOString(),
-          endedAt: values.endedAt.toISOString(),
-          distanceKm: values.distanceKm,
-          fuelConsumed: values.fuelConsumed,
-        },
-      });
-      void message.success(t('trips.modal.success'));
-      form.resetFields();
-      onCreated();
-    } catch (err) {
-      void message.error(err instanceof Error ? err.message : t('trips.modal.errorFallback'));
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleClose = (): void => {
-    form.resetFields();
-    onClose();
-  };
-
   return (
     <Modal
       title={t('trips.modal.title')}
       open={open}
-      onOk={handleSubmit}
-      onCancel={handleClose}
+      onOk={submit}
+      onCancel={close}
       okText={t('trips.modal.submit')}
       confirmLoading={submitting}
       destroyOnClose
     >
       <Form
         form={form}
-        layout='vertical'
+        layout="vertical"
         style={{ marginTop: 16 }}
         initialValues={{ licensePlate: preselectedLicensePlate }}
       >
         <Form.Item
-          name='licensePlate'
+          name="licensePlate"
           label={t('trips.modal.vehicle')}
           rules={[{ required: true, message: t('trips.modal.validation.vehicle') }]}
         >
@@ -84,7 +55,7 @@ export default function CreateTripModal({
         </Form.Item>
 
         <Form.Item
-          name='startedAt'
+          name="startedAt"
           label={t('trips.modal.startTime')}
           rules={[{ required: true, message: t('trips.modal.validation.startTime') }]}
         >
@@ -92,7 +63,7 @@ export default function CreateTripModal({
         </Form.Item>
 
         <Form.Item
-          name='endedAt'
+          name="endedAt"
           label={t('trips.modal.endTime')}
           rules={[{ required: true, message: t('trips.modal.validation.endTime') }]}
         >
@@ -100,7 +71,7 @@ export default function CreateTripModal({
         </Form.Item>
 
         <Form.Item
-          name='distanceKm'
+          name="distanceKm"
           label={t('trips.modal.distanceKm')}
           rules={[{ required: true, message: t('trips.modal.validation.distanceKm') }]}
         >
@@ -113,7 +84,7 @@ export default function CreateTripModal({
         </Form.Item>
 
         <Form.Item
-          name='fuelConsumed'
+          name="fuelConsumed"
           label={t('trips.modal.fuel')}
           rules={[{ required: true, message: t('trips.modal.validation.fuel') }]}
         >

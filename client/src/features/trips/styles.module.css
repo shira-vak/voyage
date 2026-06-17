@@ -9,9 +9,3 @@
 .filters {
   flex-shrink: 0;
 }
-
-.tableWrapper {
-  flex: 1;
-  overflow: hidden;
-  min-height: 0;
-}

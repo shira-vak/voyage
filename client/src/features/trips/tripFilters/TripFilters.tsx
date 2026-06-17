@@ -1,7 +1,7 @@
 import { DatePicker, Select, Space } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import type { VehicleResponseDto } from '../../api/generated';
+import type { VehicleResponseDto } from '../../../api/generated';
 
 interface TripFiltersProps {
   vehicles: VehicleResponseDto[];
@@ -15,7 +15,7 @@ interface TripFiltersProps {
 
 const SELECT_MIN_WIDTH = 200;
 
-export default function TripFilters({
+export function TripFilters({
   vehicles,
   licensePlate,
   startDate,
@@ -45,14 +45,14 @@ export default function TripFilters({
       <DatePicker
         value={startDate}
         onChange={onStartDateChange}
-        format='YYYY-MM-DD'
+        format="YYYY-MM-DD"
         placeholder={t('trips.filters.fromDate')}
       />
 
       <DatePicker
         value={endDate}
         onChange={onEndDateChange}
-        format='YYYY-MM-DD'
+        format="YYYY-MM-DD"
         placeholder={t('trips.filters.toDate')}
       />
     </Space>

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { PaginatedTripsDto } from '../../api/generated';
-import { TripsService } from '../../api/generated';
-import type { TripsQuery } from './types';
+import type { PaginatedTripsDto } from '../../../api/generated';
+import { TripsService } from '../../../api/generated';
+import type { TripsQuery } from '../types';
 
 interface UseTripsResult {
   result: PaginatedTripsDto | null;

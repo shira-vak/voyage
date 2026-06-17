@@ -606,3 +606,75 @@ Update CLAUDE.md with any newly established frontend and architecture convention
 
 #### Result:
 It seperated the logic into a costume hook and shorter modal file.
+
+---
+
+## 2026-06-17 10:50 - Prompt to fix trip code based on my manual fix
+
+#### Tool: chatGPT GPT-5.5
+
+#### Prompt:
+ok, now that i changed a large amount of my frontend code i want to craete a prompt for claude to learn from what i changed - mainly in the vehicles folder and implement the same to the trips folder. i have changed the code completely conventions wise - folder hirarchy, components seperation. seperation to hooks and hooks folder, types folder and so on. i want to prompt it to learn from it execurte the change to the trips folder(while keeping the UI/UX as is) and updating the claude.md based on what he learnt.thx
+
+#### Result:
+Read the vehicles folder carefully and treat it as the new source of truth for frontend architecture conventions.
+
+The vehicles feature has been fully refactored and represents the correct patterns for this project. You must learn its structure and apply the same conventions to the trips folder.
+
+Important constraints:
+- Do NOT change UI/UX design, layout, spacing, or visual behavior in any way.
+- Do NOT introduce new features or remove existing ones.
+- Only refactor structure, organization, and code quality.
+- Preserve all existing business logic and API behavior.
+
+
+What you MUST learn from the vehicles folder
+Use it as the reference implementation for:
+1. Folder structure
+   - separation into:
+     - hooks/
+     - components/
+     - types/
+     - utils/ (if applicable)
+     - constants/ (if applicable)
+
+2. Component design
+   - UI components are split into small, readable subcomponents ONLY when it improves clarity
+   - main components act as orchestration layers
+   - no business logic inside JSX beyond simple rendering decisions
+
+3. Hooks pattern
+   - data fetching and side effects are moved into hooks
+   - components do not contain raw API calls or useEffect logic for fetching
+
+4. API usage
+   - all API calls stay inside hooks or service layer usage inside hooks
+   - no direct API calls inside UI components
+
+5. Naming conventions
+   - consistent feature-based naming (VehicleCardHeader, VehicleSummaryStats, etc.)
+
+Your task
+1. Analyze the vehicles folder and extract its architecture rules.
+2. Apply the SAME structure and conventions to the trips folder.
+3. Refactor the trips feature to match this architecture exactly:
+   - same separation principles
+   - same folder structure style
+   - same component/hook split logic
+4. Keep all UI identical (pixel-perfect preservation requirement).
+
+Additional requirement
+After completing the refactor:
+- Update CLAUDE.md to reflect the new frontend architecture conventions
+- The updated CLAUDE.md should clearly define:
+  - folder structure rules
+  - component vs hook responsibilities
+  - API usage rules
+  - when to split components
+  - when NOT to split components (important to avoid over-splitting)
+
+Output expectations
+- Refactored trips feature code
+- No UI changes
+- Clean separation similar to vehicles feature
+- Updated CLAUDE.md reflecting the learned conventions

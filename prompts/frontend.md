@@ -69,3 +69,7 @@ Prompt:
 search for `Prompt 3 | Final 2nd prompt: after my edits` in chat-prompts.md.
 
 ---
+
+## 2026-06-17 23:00 - Trips feature architecture refactor
+
+Refactored the trips feature to match the vehicles feature architecture. Extracted `useTrips` and `useCreateTripModal` hooks into `hooks/`, split `TripsPage` into `TripsHeader`, `TripsTable`, and `TripFilters` subcomponents with their own folders, moved pure functions (`buildQuery`, `buildColumns`, `formatDuration`) into scoped `utils.ts` files. Updated `CLAUDE.md` with formal frontend folder-structure and component/hook responsibility rules derived from the vehicles reference implementation.

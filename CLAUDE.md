@@ -144,10 +144,63 @@ Apply the same `ValidationPipe` configuration in controller integration tests.
 
 - TypeScript only — no `.js` or `.jsx` files to create.
 - Explicit types on all props, hook return values, state, and API responses. No `any`.
-- Keep components small and focused. If a component is too long and can be split to separated logic, split it.
 - Separate data fetching from rendering — use hooks for data logic.
 - Avoid global state unless local state + context genuinely cannot solve the problem.
 - Use `openapi-typescript-codegen` to generate a typed API client from the backend OpenAPI spec. Never re-declare types that already exist in the generated client.
+
+### Feature Folder Structure
+
+Each feature lives under `client/src/features/<featureName>/` and follows this layout:
+
+```
+<featureName>/
+├── <FeatureName>Page.tsx        ← thin orchestration only (state + layout, no logic)
+├── <Feature>Header.tsx          ← page header + primary action button
+├── types.ts                     ← feature-local TypeScript types
+├── consts.ts                    ← feature-local constants
+├── utils.ts                     ← pure functions used at the page level (only if needed)
+├── styles.module.css            ← page-level layout styles
+├── hooks/
+│   ├── use<Feature>.ts          ← data-fetching hook
+│   └── use<Action><Feature>.ts  ← action hooks (create, update, etc.)
+├── <subFeature>/                ← one folder per logical UI section
+│   ├── <SubFeature>.tsx
+│   ├── utils.ts                 ← pure helpers for this sub-feature (only if needed)
+│   └── styles.module.css        ← scoped styles for this sub-feature
+└── create<Feature>Modal/
+    └── Create<Feature>Modal.tsx
+```
+
+### Component Responsibilities
+
+- **Page component** (`<Feature>Page.tsx`): owns all page-level state (open/close modals, filter values, pagination), calls hooks, wires handlers, renders layout. No business logic or API calls.
+- **Header component** (`<Feature>Header.tsx`): renders `PageHeader` with title and the primary action button. Receives a callback prop — no state.
+- **Sub-feature components**: own their own rendering logic and any sub-scoped state. Receive data and callbacks via props.
+- **No API calls inside components** — all `Service.*` calls belong in hooks.
+
+### Hook Responsibilities
+
+- **Data-fetching hooks** (`useTrips`, `useVehicles`): manage loading / error / data state, expose a `reload` function. Call one service method.
+- **Action hooks** (`useCreateTripModal`, `useCreateVehicleModal`): receive a form instance and callbacks, handle submit + close logic, manage `submitting` state.
+- All hooks return explicit typed objects — no implicit `any`.
+
+### When to Split Components
+
+**Do split** when:
+- A logical section of a page (table, drawer, grid) is large enough to have its own styling or sub-components.
+- A section has its own internal state or derived data (e.g. `useMemo` for columns).
+
+**Do not split** when:
+- It would only move JSX from one file to another with no reuse, no hook, and no isolated state.
+- The component is already small and reads clearly as-is.
+
+### Pure Utilities
+
+- `utils.ts` files contain **pure functions with no JSX only** — formatting helpers, derived values, query builders.
+- Page-level pure functions (e.g. building a query object from filter state) go in the feature root `utils.ts`.
+- Sub-feature pure functions (e.g. `formatDuration`) go in the sub-feature folder's own `utils.ts`.
+- Functions that return JSX (e.g. column render functions) are **not** utilities — they live inside the component file that uses them.
+- Never import a sub-feature's `utils.ts` from the page level — keep the dependency direction downward.
 
 ### OpenAPI Client Generation
 
