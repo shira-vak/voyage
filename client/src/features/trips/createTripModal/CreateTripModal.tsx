@@ -1,9 +1,13 @@
-import { DatePicker, Form, InputNumber, Modal, Select } from 'antd';
-import { useTranslation } from 'react-i18next';
-import type { VehicleResponseDto } from '../../../api/generated';
-import { DATETIME_FORMAT, DECIMAL_PRECISION, MIN_POSITIVE_VALUE } from '../consts';
-import { useCreateTripModal } from '../hooks/useCreateTripModal';
-import type { TripFormValues } from '../types';
+import { DatePicker, Form, InputNumber, Modal, Select } from "antd";
+import { useTranslation } from "react-i18next";
+import type { VehicleResponseDto } from "../../../api/generated";
+import {
+  DATETIME_FORMAT,
+  DECIMAL_PRECISION,
+  MIN_POSITIVE_VALUE,
+} from "../consts";
+import { useCreateTripModal } from "../hooks/useCreateTripModal";
+import type { TripFormValues } from "../types";
 
 interface CreateTripModalProps {
   open: boolean;
@@ -23,7 +27,11 @@ export default function CreateTripModal({
   const { t } = useTranslation();
   const [form] = Form.useForm<TripFormValues>();
 
-  const { submitting, submit, close } = useCreateTripModal({ form, onCreated, onClose });
+  const { submitting, submit, close } = useCreateTripModal({
+    form,
+    onCreated,
+    onClose,
+  });
 
   const vehicleOptions = vehicles.map((v) => ({
     value: v.licensePlate,
@@ -32,13 +40,13 @@ export default function CreateTripModal({
 
   return (
     <Modal
-      title={t('trips.modal.title')}
+      title={t("trips.modal.title")}
       open={open}
       onOk={submit}
       onCancel={close}
-      okText={t('trips.modal.submit')}
+      okText={t("trips.modal.submit")}
       confirmLoading={submitting}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}
@@ -48,51 +56,72 @@ export default function CreateTripModal({
       >
         <Form.Item
           name="licensePlate"
-          label={t('trips.modal.vehicle')}
-          rules={[{ required: true, message: t('trips.modal.validation.vehicle') }]}
+          label={t("trips.modal.vehicle")}
+          rules={[
+            { required: true, message: t("trips.modal.validation.vehicle") },
+          ]}
         >
-          <Select placeholder={t('trips.modal.vehiclePlaceholder')} options={vehicleOptions} />
+          <Select
+            placeholder={t("trips.modal.vehiclePlaceholder")}
+            options={vehicleOptions}
+          />
         </Form.Item>
 
         <Form.Item
           name="startedAt"
-          label={t('trips.modal.startTime')}
-          rules={[{ required: true, message: t('trips.modal.validation.startTime') }]}
+          label={t("trips.modal.startTime")}
+          rules={[
+            { required: true, message: t("trips.modal.validation.startTime") },
+          ]}
         >
-          <DatePicker showTime format={DATETIME_FORMAT} style={{ width: '100%' }} />
+          <DatePicker
+            showTime
+            format={DATETIME_FORMAT}
+            style={{ width: "100%" }}
+          />
         </Form.Item>
 
         <Form.Item
           name="endedAt"
-          label={t('trips.modal.endTime')}
-          rules={[{ required: true, message: t('trips.modal.validation.endTime') }]}
+          label={t("trips.modal.endTime")}
+          rules={[
+            { required: true, message: t("trips.modal.validation.endTime") },
+          ]}
         >
-          <DatePicker showTime format={DATETIME_FORMAT} style={{ width: '100%' }} />
+          <DatePicker
+            showTime
+            format={DATETIME_FORMAT}
+            style={{ width: "100%" }}
+          />
         </Form.Item>
 
         <Form.Item
           name="distanceKm"
-          label={t('trips.modal.distanceKm')}
-          rules={[{ required: true, message: t('trips.modal.validation.distanceKm') }]}
+          label={t("trips.modal.distanceKm")}
+          rules={[
+            { required: true, message: t("trips.modal.validation.distanceKm") },
+          ]}
         >
           <InputNumber
             min={MIN_POSITIVE_VALUE}
             precision={DECIMAL_PRECISION}
-            style={{ width: '100%' }}
-            placeholder={t('trips.modal.distancePlaceholder')}
+            style={{ width: "100%" }}
+            placeholder={t("trips.modal.distancePlaceholder")}
           />
         </Form.Item>
 
         <Form.Item
           name="fuelConsumed"
-          label={t('trips.modal.fuel')}
-          rules={[{ required: true, message: t('trips.modal.validation.fuel') }]}
+          label={t("trips.modal.fuel")}
+          rules={[
+            { required: true, message: t("trips.modal.validation.fuel") },
+          ]}
         >
           <InputNumber
             min={MIN_POSITIVE_VALUE}
             precision={DECIMAL_PRECISION}
-            style={{ width: '100%' }}
-            placeholder={t('trips.modal.fuelPlaceholder')}
+            style={{ width: "100%" }}
+            placeholder={t("trips.modal.fuelPlaceholder")}
           />
         </Form.Item>
       </Form>
