@@ -4,34 +4,6 @@ Log entries for prompts that generate or modify: React components, pages, hooks,
 
 ---
 
-## 2026-06-16 17:10 - Initial client generating prompt
-
-Tool: chatGPT 5.5
-
-Prompt:
-[assignment.pdf content] based on the assignment. i want to create a prompt for claude to craete the front of the app. i will also provide him the assignment - so no need to rewrite anything in it - and let claude architect the implementation. i just want you to help me with the prompt i attach with the assignment.
-in the prompt i want it to craete a vite client side with react, antd. have good non duplicates code and use all it learnt from what i like in code architecture from previous conversations and the claude.md [provided claude.md content] 
-
-Result (In the next headline you will see i changed the prompt a bit):
-You are implementing the frontend for the attached Fleet Trip Log assignment.
-
-Read the assignment and CLAUDE.md before making any decisions. Follow both documents strictly. If there is a conflict, explain it before proceeding.
-
-Your task is to architect and implement the frontend application.
-
-Additional requirements:
-
-* Use Vite.
-* Use Ant Design (antd).
-* The UI should look professional and clean, with a natural green accent color.
-* Design the frontend architecture yourself based on the assignment requirements and the backend API requirements described in the assignment.
-* Create a frontend structure that is maintainable and scalable without being over-engineered for the assignment scope.
-* Keep the frontend ready to integrate with the backend implementation.
-* Prefer feature-oriented organization when it improves cohesion, but avoid excessive nesting and unnecessary complexity.
-* Focus on a good user experience for the core flows rather than visual effects or advanced styling.
-
----
-
 ## 2026-06-16 22:30 - Frontend architecture and full implementation
 
 Tool: Claude Code (claude-sonnet-4-6)
