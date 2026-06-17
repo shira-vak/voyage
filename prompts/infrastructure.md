@@ -16,7 +16,7 @@ Created CLAUDE.md with full project conventions and initialized the /prompts dir
 
 ---
 
-## 2026-06-15 17:45 - Initial project conventions and CLAUDE.md
+## 2026-06-17 00:20 - README documentation
 
 Tool: Claude Sonnet 4.6
 
@@ -26,13 +26,23 @@ Write a clean, detailed, production-ready README for my full-stack app. It shoul
 Result:
 README.md is written. Here's what's covered:
 
-Prerequisites — Node, npm, Docker with version table and verify commands
-Project Structure — annotated directory tree for both server and client
-Quick Start — 7 numbered steps from clone to running app, copy-paste ready
-Environment Variables — table of every key with its default and what it does, plus the DATABASE_URL interpolation caveat
-Database — start/stop/reset/migrate/seed/studio, each as its own subsection with the exact command
-Backend — dev server, production build, full endpoint table
-Frontend — dev server, production build, API client regeneration workflow
-API Documentation — Swagger UI and raw JSON spec URLs
-Tests — run/watch/coverage commands plus the test folder structure
-Useful Commands — quick-reference tables for backend, frontend, and Docker
+- Prerequisites — Node, npm, Docker with version table and verify commands
+- Project Structure — annotated directory tree for both server and client
+- Quick Start — 7 numbered steps from clone to running app, copy-paste ready
+- Environment Variables — table of every key with its default and what it does, plus the DATABASE_URL interpolation caveat
+- Database — start/stop/reset/migrate/seed/studio, each as its own subsection with the exact command
+- Backend — dev server, production build, full endpoint table
+- Frontend — dev server, production build, API client regeneration workflow
+- API Documentation — Swagger UI and raw JSON spec URLs
+- Tests — run/watch/coverage commands plus the test folder structure
+- Useful Commands — quick-reference tables for backend, frontend, and Docker
+
+---
+
+## 2026-06-18 01:30 - Pre-submission review and minor fixes
+
+Final audit pass. Fixed:
+
+- Moved inline `style={{ marginTop: 16 }}` on the `CreateTripModal` form into a new `createTripModal/styles.module.css` file, referencing it via `className`.
+- Removed a stray double blank line in `VehicleSummaryDrawer.tsx` imports.
+- Fixed `README.md`: normalised inconsistent column spacing in the API endpoint table.

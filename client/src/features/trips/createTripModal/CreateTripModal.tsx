@@ -8,6 +8,7 @@ import {
 } from "../consts";
 import { useCreateTripModal } from "../hooks/useCreateTripModal";
 import type { TripFormValues } from "../types";
+import styles from "./styles.module.css";
 
 interface CreateTripModalProps {
   open: boolean;
@@ -51,7 +52,7 @@ export default function CreateTripModal({
       <Form
         form={form}
         layout="vertical"
-        style={{ marginTop: 16 }}
+        className={styles.form}
         initialValues={{ licensePlate: preselectedLicensePlate }}
       >
         <Form.Item
@@ -77,7 +78,7 @@ export default function CreateTripModal({
           <DatePicker
             showTime
             format={DATETIME_FORMAT}
-            style={{ width: "100%" }}
+            className={styles.fullWidth}
           />
         </Form.Item>
 
@@ -91,7 +92,7 @@ export default function CreateTripModal({
           <DatePicker
             showTime
             format={DATETIME_FORMAT}
-            style={{ width: "100%" }}
+            className={styles.fullWidth}
           />
         </Form.Item>
 
@@ -105,7 +106,7 @@ export default function CreateTripModal({
           <InputNumber
             min={MIN_POSITIVE_VALUE}
             precision={DECIMAL_PRECISION}
-            style={{ width: "100%" }}
+            className={styles.fullWidth}
             placeholder={t("trips.modal.distancePlaceholder")}
           />
         </Form.Item>
@@ -120,7 +121,7 @@ export default function CreateTripModal({
           <InputNumber
             min={MIN_POSITIVE_VALUE}
             precision={DECIMAL_PRECISION}
-            style={{ width: "100%" }}
+            className={styles.fullWidth}
             placeholder={t("trips.modal.fuelPlaceholder")}
           />
         </Form.Item>

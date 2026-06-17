@@ -278,7 +278,7 @@ npm run start:prod
 | `POST` | `/vehicles`                       | Create a vehicle                                                   |
 | `GET`  | `/vehicles/:licensePlate`         | Get a vehicle by license plate                                     |
 | `GET`  | `/vehicles/:licensePlate/summary` | Aggregated trip stats for a vehicle                                |
-| `POST` | `/trips/:licensePlate`    | Record a new trip for a vehicle                                    |
+| `POST` | `/trips/:licensePlate`            | Record a new trip for a vehicle                                    |
 | `GET`  | `/trips`                          | List trips (filterable by license plate and date range, paginated) |
 
 ---

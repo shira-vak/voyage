@@ -1,7 +1,5 @@
 import { Alert, Drawer, Skeleton } from "antd";
 import { useTranslation } from "react-i18next";
-
-
 import { useVehicleSummary } from "../hooks/useVehicleSummary";
 import { VehicleSummaryDetails } from "./VehicleSummaryDetails";
 import { VehicleSummaryDrawerHeader } from "./VehicleSummaryDrawerHeader";
