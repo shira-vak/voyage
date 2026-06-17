@@ -2,7 +2,7 @@ import { INestApplication, NotFoundException, ValidationPipe } from '@nestjs/com
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { DecimalTransformInterceptor } from '../../common/decimal-transform.interceptor';
-import { MOCK_VEHICLE, MOCK_VEHICLE_ID, MOCK_VEHICLE_LICENSE_PLATE, MOCK_VEHICLE_SUMMARY } from '../../test/consts';
+import { MOCK_VEHICLE, MOCK_VEHICLE_ID, MOCK_VEHICLE_LICENSE_PLATE, MOCK_VEHICLE_SUMMARY } from '../../tests/consts';
 import { VehiclesController } from '../vehicles.controller';
 import { VehiclesService } from '../vehicles.service';
 import { MOCK_CREATE_VEHICLE_DTO } from './consts';

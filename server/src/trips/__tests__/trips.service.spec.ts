@@ -13,7 +13,7 @@ import {
   MOCK_VEHICLE_ID,
   MOCK_VEHICLE_LICENSE_PLATE,
   prismaMock,
-} from '../../test/consts';
+} from '../../tests/consts';
 import { VehiclesService } from '../../vehicles/vehicles.service';
 import { TripsService } from '../trips.service';
 import { MOCK_CREATE_TRIP_DTO, MOCK_LIST_TRIPS_QUERY } from './consts';

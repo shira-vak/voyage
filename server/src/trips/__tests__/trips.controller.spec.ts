@@ -2,7 +2,7 @@ import { INestApplication, NotFoundException, ValidationPipe } from '@nestjs/com
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { DecimalTransformInterceptor } from '../../common/decimal-transform.interceptor';
-import { MOCK_TRIP_DISTANCE_KM, MOCK_TRIP_RESPONSE, MOCK_VEHICLE_LICENSE_PLATE } from '../../test/consts';
+import { MOCK_TRIP_DISTANCE_KM, MOCK_TRIP_RESPONSE, MOCK_VEHICLE_LICENSE_PLATE } from '../../tests/consts';
 import { TripsController } from '../trips.controller';
 import { TripsService } from '../trips.service';
 import { MOCK_CREATE_TRIP_DTO } from './consts';

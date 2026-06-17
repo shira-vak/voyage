@@ -1,4 +1,4 @@
-import { MOCK_TRIP_DISTANCE_KM, MOCK_TRIP_END, MOCK_TRIP_FUEL_CONSUMED, MOCK_TRIP_START } from '../../test/consts';
+import { MOCK_TRIP_DISTANCE_KM, MOCK_TRIP_END, MOCK_TRIP_FUEL_CONSUMED, MOCK_TRIP_START } from '../../tests/consts';
 import type { CreateTripDto } from '../dtos/create-trip.dto';
 import type { ListTripsQueryDto } from '../dtos/list-trips-query.dto';
 

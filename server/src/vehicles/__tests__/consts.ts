@@ -1,4 +1,4 @@
-import { MOCK_VEHICLE_LICENSE_PLATE, MOCK_VEHICLE_NAME } from '../../test/consts';
+import { MOCK_VEHICLE_LICENSE_PLATE, MOCK_VEHICLE_NAME } from '../../tests/consts';
 import type { CreateVehicleDto } from '../dtos/create-vehicle.dto';
 
 export const MOCK_CREATE_VEHICLE_DTO: CreateVehicleDto = {
