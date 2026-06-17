@@ -69,27 +69,13 @@ export default function CreateTripModal({
         </Form.Item>
 
         <Form.Item
-          name="startedAt"
-          label={t("trips.modal.startTime")}
+          name="dateRange"
+          label={t("trips.modal.dateRange")}
           rules={[
-            { required: true, message: t("trips.modal.validation.startTime") },
+            { required: true, message: t("trips.modal.validation.dateRange") },
           ]}
         >
-          <DatePicker
-            showTime
-            format={DATETIME_FORMAT}
-            className={styles.fullWidth}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="endedAt"
-          label={t("trips.modal.endTime")}
-          rules={[
-            { required: true, message: t("trips.modal.validation.endTime") },
-          ]}
-        >
-          <DatePicker
+          <DatePicker.RangePicker
             showTime
             format={DATETIME_FORMAT}
             className={styles.fullWidth}

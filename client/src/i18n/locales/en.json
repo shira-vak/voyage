@@ -34,16 +34,14 @@
       "submit": "Record Trip",
       "vehicle": "Vehicle",
       "vehiclePlaceholder": "Select vehicle",
-      "startTime": "Start Time",
-      "endTime": "End Time",
+      "dateRange": "Start & End Time",
       "distanceKm": "Distance (km)",
       "fuel": "Fuel / Energy Consumed (L or kWh)",
       "distancePlaceholder": "e.g. 145.5",
       "fuelPlaceholder": "e.g. 18.3",
       "validation": {
         "vehicle": "Select a vehicle",
-        "startTime": "Select start time",
-        "endTime": "Select end time",
+        "dateRange": "Select start and end time",
         "distanceKm": "Enter distance",
         "fuel": "Enter fuel consumed"
       },

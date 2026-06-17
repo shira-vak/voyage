@@ -70,6 +70,15 @@ search for `Prompt 3 | Final 2nd prompt: after my edits` in chat-prompts.md.
 
 ---
 
-## 2026-06-17 23:00 - Trips feature architecture refactor
+## 2026-06-17 23:00 - Trips feature architecture refactor (from backend)
 
 Refactored the trips feature to match the vehicles feature architecture. Extracted `useTrips` and `useCreateTripModal` hooks into `hooks/`, split `TripsPage` into `TripsHeader`, `TripsTable`, and `TripFilters` subcomponents with their own folders, moved pure functions (`buildQuery`, `buildColumns`, `formatDuration`) into scoped `utils.ts` files. Updated `CLAUDE.md` with formal frontend folder-structure and component/hook responsibility rules derived from the vehicles reference implementation.
+
+## 2026-06-18 01:40 - OpenAPI generated client + license plate vehicle selection
+
+Tool: Claude Sonnet 4.6
+
+Prompt:
+make the create trip form use range picker for the date picker(since both the start and end date are required) but then format it seperately as start date and end date internally in the code
+
+

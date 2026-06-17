@@ -21,11 +21,12 @@ export function useCreateTripModal({ form, onCreated, onClose }: Params) {
     const values = await form.validateFields();
     setSubmitting(true);
     try {
+      const [startedAt, endedAt] = values.dateRange;
       await TripsService.tripsControllerCreateTrip({
         licensePlate: values.licensePlate,
         requestBody: {
-          startedAt: values.startedAt.toISOString(),
-          endedAt: values.endedAt.toISOString(),
+          startedAt: startedAt.toISOString(),
+          endedAt: endedAt.toISOString(),
           distanceKm: values.distanceKm,
           fuelConsumed: values.fuelConsumed,
         },

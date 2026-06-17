@@ -10,8 +10,7 @@ export interface TripsQuery {
 
 export interface TripFormValues {
   licensePlate: string;
-  startedAt: Dayjs;
-  endedAt: Dayjs;
+  dateRange: [Dayjs, Dayjs];
   distanceKm: number;
   fuelConsumed: number;
 }
