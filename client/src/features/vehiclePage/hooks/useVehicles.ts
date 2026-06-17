@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { VehicleResponseDto } from '../../../api/generated';
-import { VehiclesService } from '../../../api/generated';
+import { useCallback, useEffect, useState } from "react";
+import type { VehicleResponseDto } from "../../../api/generated";
+import { VehiclesService } from "../../../api/generated";
+import { extractErrorMessage } from "../../utils";
 
 interface UseVehiclesResult {
   vehicles: VehicleResponseDto[];
@@ -21,13 +22,15 @@ export function useVehicles(): UseVehiclesResult {
       const data = await VehiclesService.vehiclesControllerListVehicles();
       setVehicles(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load vehicles');
+      setError(extractErrorMessage(err, "Failed to load vehicles"));
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   return { vehicles, loading, error, reload: load };
 }

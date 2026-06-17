@@ -1,4 +1,3 @@
-import { Alert } from "antd";
 import { useState } from "react";
 import CreateVehicleModal from "./createVehicleModal/CreateVehicleModal";
 import { useVehicles } from "./hooks/useVehicles";
@@ -8,7 +7,7 @@ import { VehiclesGrid } from "./vehiclesGrid/VehiclesGrid";
 import { VehicleHeader } from "./VehicleHeader";
 
 export default function VehiclesPage(): React.ReactElement {
-  const { vehicles, loading, error, reload } = useVehicles();
+  const { vehicles, loading, reload } = useVehicles();
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedLicensePlate, setSelectedLicensePlate] = useState<
     string | null
@@ -23,19 +22,9 @@ export default function VehiclesPage(): React.ReactElement {
     <div className={styles.page}>
       <VehicleHeader setCreateOpen={setCreateOpen} />
 
-      {error && (
-        <Alert
-          type="error"
-          message={error}
-          showIcon
-          style={{ flexShrink: 0 }}
-        />
-      )}
-
       <VehiclesGrid
         vehicles={vehicles}
         loading={loading}
-        error={error}
         setSelectedLicensePlate={setSelectedLicensePlate}
       />
 

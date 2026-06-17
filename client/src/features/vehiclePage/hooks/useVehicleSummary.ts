@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { VehicleSummaryDto } from "../../../api/generated";
 import { VehiclesService } from "../../../api/generated";
+import { extractErrorMessage } from "../../utils";
 
 type Params = {
   licensePlate: string | null;
@@ -25,7 +26,7 @@ export function useVehicleSummary({
     VehiclesService.vehiclesControllerGetVehicleSummary({ licensePlate })
       .then(setSummary)
       .catch((err: unknown) =>
-        setError(err instanceof Error ? err.message : errorMessageFallback),
+        setError(extractErrorMessage(err, errorMessageFallback)),
       )
       .finally(() => setLoading(false));
   }, [licensePlate, errorMessageFallback]);

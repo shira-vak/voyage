@@ -7,14 +7,12 @@ import styles from "./styles.module.css";
 interface VehiclesGridProps {
   vehicles: any[];
   loading: boolean;
-  error: string | null;
   setSelectedLicensePlate: (licensePlate: string | null) => void;
 }
 
 export const VehiclesGrid = ({
   vehicles,
   loading,
-  error,
   setSelectedLicensePlate,
 }: VehiclesGridProps) => {
   const { t } = useTranslation();
@@ -25,7 +23,7 @@ export const VehiclesGrid = ({
         <SkeletonVehiclesGrid skeletonCount={vehicles.length ?? undefined} />
       )}
 
-      {!loading && vehicles.length === 0 && !error && (
+      {!loading && vehicles.length === 0 && (
         <Empty description={t("vehicles.noVehicles")} />
       )}
 

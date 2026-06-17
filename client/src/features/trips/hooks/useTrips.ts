@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { PaginatedTripsDto } from '../../../api/generated';
-import { TripsService } from '../../../api/generated';
-import type { TripsQuery } from '../types';
+import { useCallback, useEffect, useState } from "react";
+import type { PaginatedTripsDto } from "../../../api/generated";
+import { TripsService } from "../../../api/generated";
+import { extractErrorMessage } from "../../utils";
+import type { TripsQuery } from "../types";
 
 interface UseTripsResult {
   result: PaginatedTripsDto | null;
@@ -28,13 +29,15 @@ export function useTrips(query: TripsQuery): UseTripsResult {
       });
       setResult(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load trips');
+      setError(extractErrorMessage(err, "Failed to load trips"));
     } finally {
       setLoading(false);
     }
   }, [JSON.stringify(query)]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   return { result, loading, error, reload: load };
 }

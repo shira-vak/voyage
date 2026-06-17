@@ -1,7 +1,9 @@
-import { Layout, Menu } from "antd";
+import { Alert, Layout, Menu } from "antd";
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
+import { CUSTOM_UNREACHABLE_SERVER_EVENT } from "../utils";
 import AppBranding from "./AppBranding";
 import styles from "./styles.module.css";
 
@@ -17,6 +19,14 @@ export default function AppLayout({
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const [serverDown, setServerDown] = useState(false);
+
+  useEffect(() => {
+    const handler = (): void => setServerDown(true);
+    window.addEventListener(CUSTOM_UNREACHABLE_SERVER_EVENT, handler);
+    return () =>
+      window.removeEventListener(CUSTOM_UNREACHABLE_SERVER_EVENT, handler);
+  }, []);
 
   const navItems = [
     { key: "/trips", label: t("nav.trips") },
@@ -35,6 +45,16 @@ export default function AppLayout({
           className={styles.nav}
         />
       </Header>
+
+      {serverDown && (
+        <Alert
+          type="error"
+          message={t("errors.serverUnreachable")}
+          banner
+          closable
+          onClose={() => setServerDown(false)}
+        />
+      )}
 
       <Content className={styles.content}>
         <div className={styles.contentInner}>{children}</div>
