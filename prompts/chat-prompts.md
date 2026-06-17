@@ -53,23 +53,23 @@ help me generate the new prompt to fix all problems i see in the currently gener
 
 1 - keep the current look of the app - genally it looks really good - so unless ecplicitly written dont change the UI.
 
-2 - the frontend usage of the backend api and the backend types are not genrated with openapi-typescript-codegen like asked in the claude.md - make it generate the code , add a script line to generate and implment it in the front code.
+2 - the frontend usage of the backend api and the backend types are not genrated with openapi-typescript-codegen like asked in the claude.md - make it generate the code , add a script line to generate and implment it in the front  code.
 
-3 - in the vehicles card under the vehicles tab make the title the licence plate(it is unique) and under it the nameof the vehicle(so- switch them from what exist now)
+ 3 - in the vehicles card under the vehicles tab make the title the licence plate(it is unique) and under it the nameof the vehicle(so- switch them from what exist now)
 
-4 -in the trip tab - the add trip popup: most of it is perfect. the date selection is bad - the idea is very cute but the execution is lacking - the date selection component does not fit in the widow so i cant see the buttom half of it and press the ok to move to the end date. in that form when a wrong input is enetered its not warn it ust changes the input - dont change what the user input - warn what the problem is(the backend suppose to supply the requirents for the inputs in the dtos. - if not update to make it work) - but leave how the date fix work - its really good that if i picked it end date to start dateit switches them.
+4 -in the trip tab - the add trip popup: most of it is perfect. the date selection is bad - the idea is very cute but the execution is lacking - the date selection component does not fit in the widow so i cant see the buttom half of it and  press the ok to move to the end date. in that form when a wrong input is enetered its not warn it ust changes the input - dont change what the user input - warn what the problem is(the backend suppose to supply the requirents for the inputs in the dtos. - if not update to make it work) - but leave how the date fix work - its really good that if i picked it end date to start dateit switches them. 
 
-5 - the trips table: add a vehicle name and licent column. so it will go in this order of columns: name. licent, Duration, Distance (km), Fuel / Energy, Efficiency, Started, Ended.
+5 - the trips table: add a vehicle name and licent column. so it will go in this order of columns: name. licent, Duration,	Distance (km),	Fuel / Energy,	Efficiency, Started,	Ended. 
 
 6 - trips filter - the date filter is very nice at the top to allow filtering from start date to end date. but it dosent allow to pick just one - from start/ up to end date - so make the filters maybe in the table - so i can pick the start date column title and pick a start date and same for the end. and the rest of the filters there- so also filter based on the vehicle licence plate (speaking on which the server has a bug - instead of filtering and adding trip based on the vehicle id it needs to be based on the licence plate - so no vehicle id in trips remove all and chnage it to use the lince plate instead in the backend - and the same in front), Also allow to reorder the table columns with antd column order - ascend and discend.
 
 7 - scroll - the scroll is on the entire screen - not allow all screen scroll. the screen the tollbar and stuff at the top of each screen like the add trip or add vehicle button or the next page for the table need to be static - always shown. but the vehicles cards and the trip table need the scroll.
 
-8 - there are errors and warnings in the consule - regarding the promises, deprecated usage - fix all.
-
+8 -  there are errors and warnings in the consule - regarding the promises, deprecated usage - fix all.
+ 
 9 - the antd theme - add a switch at the top of the toolbar to switch between dark and lightmode. mv the theme to a seperated theme folder with the dark and light theme and use it based on the context of the theme. (in general no magic numbers and objects in the code - move to a seperated const and dont use it directly in the component)
 
-10 - style and css - no style in the tsx files. all styles in a styles.module.css file and use class-names to use them in the cmponents. the css should be clean and organized - colors and other common css consts prefered to be saved in css variables.
+10 - style and css - no style in the tsx files. all styles in a styles.module.css file and use class-names to use them in the cmponents. the css should be clean and organized - colors and other common css consts prefered to be saved in css variables. 
 
 11 - the app should support i18n - for now just english.
 
@@ -85,91 +85,107 @@ help me generate the new prompt to fix all problems i see in the currently gener
 
 at last - make sure all the code(if it caused changes in the backend so the backend as well) works correctly and as expected, and written in a clean and efficiant way like instructed in claude.md file. And update the claude.md file based on the new learnt requirnments and expectations of code and claude behaviour in developng the app in genral and specifically in the frontend side.
 
+
+these are all the chneges i need to be made for my app. i need your help to craete prompts from it that will make cluaude work in a good efficiant way - write the code in a clean and clear way withoute loosing focus and  not using too many tokens for unnesessary things. seperate it to maybe front and back logic or whatevber you think will help best
+
 #### Output:
+
+##### Prompt 1 - API Contract & Backend Corrections
 
 Read the assignment and CLAUDE.md before making any changes.
 
-The current application is in a good state overall. The goal is to improve correctness, architecture, maintainability, and UX while preserving the existing design and user experience wherever possible.
+The current application is already in a good state. The goal is to improve correctness and alignment with the project requirements while preserving the existing UI and user experience.
 
 Important:
 
-Keep the current UI and overall look-and-feel unless a change is explicitly requested below.
-Do not redesign screens or replace existing UX patterns that are already working well.
-Follow CLAUDE.md strictly.
-If a requested change requires backend modifications, update the backend as well.
-After all changes, verify that the application works correctly end-to-end and that there are no TypeScript, ESLint, build, runtime, or console errors.
-OpenAPI Client Generation
+Do not redesign the application.
+Do not perform unrelated refactors.
+Keep all existing behavior unless explicitly requested below.
+If a frontend change requires backend changes, update both sides.
+After making changes, verify that the application builds and functions correctly.
 
-The frontend currently does not use generated API types and clients as required by CLAUDE.md.
+Required changes:
+
+OpenAPI-generated client
+
+The frontend must not manually define backend request/response types.
+
+Generate and use a typed API client from the backend OpenAPI specification using openapi-typescript-codegen as required by CLAUDE.md.
 
 Requirements:
 
-Use openapi-typescript-codegen.
-Generate the frontend API client from the backend OpenAPI specification.
-Add the required generation script(s).
-Integrate the generated client into the frontend.
-Remove manually duplicated API request/response types that should come from the generated client.
-Ensure generated types become the source of truth.
-Vehicles & Trips Data Model Clarification (IMPORTANT)
+Add a script for client generation.
+Generate API services and types.
+Replace manually written API contracts and duplicated DTO types.
+Ensure frontend API usage is based on generated services and generated models.
+Vehicle identifier strategy
 
-The backend must maintain proper relational integrity:
+The application currently uses vehicleId when creating and filtering trips.
 
-vehicleId remains the internal database primary key and foreign key
-Trips must still reference vehicleId in the database and backend logic
-This is required for correct relational design and future-proofing
+Change the system to use the vehicle license plate as the trip reference instead.
 
-However:
+Requirements:
 
-The frontend and API UX should primarily use licensePlate as the human-readable identifier
-License plate is the main field users interact with (filtering, display, selection)
-Vehicle ID should not be exposed or used in the UI unless necessary
+Remove vehicleId usage from trip creation and trip filtering.
+Use the unique license plate as the vehicle reference.
+Update database schema if necessary.
+Update DTOs, validation, services, repositories, API contracts, OpenAPI definitions, generated client usage, and frontend forms.
+Ensure existing functionality continues to work correctly.
+Validation improvements
 
-Backend requirements:
+Do not silently modify invalid user input.
 
-Keep vehicleId in the database schema and relationships
-Allow trip creation using licensePlate in the API
-Internally resolve licensePlate → vehicleId in the backend service layer
-Return both vehicleId and licensePlate in responses where relevant
+Requirements:
 
-This ensures:
+Validation rules should come from backend DTOs and API contracts.
+Frontend should display validation feedback and error messages.
+Preserve the existing behavior that automatically swaps start/end dates when the user selects them in reverse order.
+Apart from that behavior, do not automatically alter user-entered values.
+General correctness
 
-correct DB normalization
-stable relational integrity
-clean UX without exposing internal IDs
-Vehicles Tab
+Fix all console warnings, deprecated APIs, promise-related warnings, and TypeScript issues in both frontend and backend.
 
-Vehicle cards currently display:
+Documentation
 
-Vehicle name as title
-License plate as subtitle
+Update CLAUDE.md with any new project conventions introduced by these changes.
 
-Change this to:
+Keep the implementation clean, strongly typed, and consistent with the existing architecture.
 
-License plate as the card title (primary identifier for users)
-Vehicle name below it
-Add Trip Dialog
+##### Prompt 2 - UI & UX Improvements
 
-The overall flow is good and should remain mostly unchanged.
+Read the assignment and CLAUDE.md before making any changes.
 
-Date Range Picker:
+The current UI is already visually strong.
 
-The date selection UI does not fit inside the modal and part of it becomes inaccessible.
-Ensure the entire date picker is visible and usable inside the modal
-No UI clipping or hidden controls
-Keep existing start/end auto-correction behavior (swapping if end < start)
+Important:
 
-Validation UX:
+Preserve the current design and look-and-feel.
+Do not redesign screens.
+Only make the changes explicitly requested below.
+Keep existing interactions whenever possible.
 
-Current behavior silently modifies user input.
-Do not silently mutate user input
-Show proper validation errors and messages instead
-Prefer backend DTO-driven validation rules
-If backend validation is insufficient, update backend + frontend accordingly
-Trips Table
+Required changes:
 
-Add vehicle information columns.
+Vehicle cards
 
-Column order must be:
+In the Vehicles section:
+
+Display the license plate as the primary title.
+Display the vehicle name as the secondary text.
+Only switch the presentation order. Do not redesign the card.
+Trip creation dialog
+
+The date selection experience needs improvement.
+
+Requirements:
+
+The date picker must fit within the modal/dialog viewport.
+All controls must remain accessible.
+Users must always be able to reach the confirmation controls.
+Preserve the existing date-selection flow and behavior where possible.
+Trips table columns
+
+Update column order to:
 
 Vehicle Name
 License Plate
@@ -179,167 +195,136 @@ Fuel / Energy
 Efficiency
 Started
 Ended
-Trips Filtering
+Trips filtering
 
-Current filtering UX is incomplete for real-world use.
-
-Requirements:
-
-Allow independent filtering:
-Started after
-Started before
-Ended after
-Ended before
-Improve UX so users can filter with only one bound (not required to set both start/end)
-Support filtering by vehicle license plate
-Consider integrating filters into table column filters if UX is improved by it
-
-Sorting:
-
-Enable Ant Design column sorting where appropriate
-Support ascending/descending sorting for relevant columns
-Scrolling Behavior
-
-Current scrolling behavior is incorrect.
+The current filtering experience should be moved closer to the table itself.
 
 Requirements:
 
-Keep fixed (always visible):
+Support filtering by start date.
+Support filtering by end date.
+Allow filtering with only one boundary selected.
+Support filtering by vehicle license plate.
+Integrate filtering naturally with the table experience.
+Sorting
 
-Page header
-Toolbar
-Action buttons
-Pagination controls
+Add table sorting support where appropriate using Ant Design table capabilities.
 
-Scrollable area:
+Scrolling behavior
 
-Vehicle list content
-Trip table content
-
-Only the data region should scroll, not the entire page layout.
-
-Console Warnings and Errors
-
-Fix all runtime and development warnings.
-
-Includes:
-
-Promise warnings
-Deprecated APIs
-React warnings
-Ant Design warnings
-TypeScript warnings
-
-Final state must have a clean console.
-
-Theme Architecture
-
-Add light/dark mode support.
+The page currently scrolls as a whole.
 
 Requirements:
 
-Add theme toggle in top toolbar
-Create dedicated theme system
-Separate theme definitions into /theme folder
-Keep green accent color consistent in both modes
-Use context (or equivalent) for theme state
+Toolbar/header areas should remain visible.
+Primary action buttons should remain visible.
+Table controls should remain visible.
+Scroll should be limited to content areas such as:
+vehicle lists
+trip tables
 
-Avoid:
+The goal is to improve usability without changing the visual design.
 
-Inline theme objects inside components
-Hardcoded theme values scattered in UI code
-Styling Standards
+Verify that all interactions continue to work correctly after implementation.
 
-Refactor styling to a consistent system.
+##### Prompt 3 - Architecture, Maintainability & Frontend Standards
+
+Read the assignment and CLAUDE.md before making any changes.
+
+The current application works well. This pass is focused on maintainability, architecture consistency, and frontend code quality.
+
+Important:
+
+Do not redesign the UI.
+Do not introduce unnecessary abstractions.
+Improve structure only where it provides clear value.
+Prefer incremental cleanup over large rewrites.
+
+Required changes:
+
+Theme architecture
+
+Implement dark mode and light mode support.
 
 Requirements:
 
-Use styles.module.css for all styling
-No inline styles in TSX
-Components must use className only
-Use CSS variables for:
-colors
-spacing
-layout constants
-Reduce duplicated styling rules
+Add a theme switch in the application toolbar.
+Move theme definitions into a dedicated theme folder.
+Separate light and dark theme configurations.
+Use a theme context/provider.
+Avoid inline theme objects throughout the application.
+CSS organization
+
+Requirements:
+
+Remove component styling from TSX files.
+Use CSS Modules.
+Keep styles in dedicated styles.module.css files.
+Extract reusable colors and shared values into CSS variables.
 Internationalization
 
-Add i18n support.
+Prepare the application for i18n.
 
 Requirements:
 
-Introduce i18n infrastructure
-All UI text must use translation keys
-English only initially
-Architecture must support adding languages without refactoring
-Component Architecture
+Add an i18n framework.
+English only for now.
+User-facing text should come from translation resources rather than hardcoded strings.
+Component structure
 
-Refactor components for clarity.
+Improve component separation.
 
 Requirements:
 
-Single responsibility per component
-Extract reusable UI pieces into separate components
-Avoid large components with mixed logic
-Ensure component/file name alignment
-Improve readability through composition, not abstraction
-Types and Constants Organization
+Each component should have a clear responsibility.
+Extract reusable UI pieces into dedicated components.
+Example: branding/logo/application title should not live directly inside layout implementation.
+Avoid large multi-purpose components.
+Types and constants
 
-Standardize code structure:
+Requirements:
 
-Shared types → types.ts
-Shared constants → consts.ts
-Feature-local types/constants → feature folder
-Place shared definitions in nearest common parent
-Remove duplicate definitions
-Remove Magic Values
+Move shared types into types.ts files.
+Move constants into consts.ts files.
+Place files at the nearest common ownership level.
+Avoid duplicated definitions.
+Eliminate magic values
 
-Eliminate all magic values:
+Review the codebase and remove unnecessary hardcoded:
 
-numbers
 strings
-config objects
+numbers
+configuration values
+labels
 
-Move them to:
+Place them in the appropriate location:
 
-consts.ts
-types.ts
+i18n resources
+constants
+backend defaults
 CSS variables
-i18n keys
-backend configuration
-generated API types
-Rendering & Performance Review
+shared configuration
+Rendering performance
 
-Improve rendering behavior without over-optimizing.
+Review component rendering behavior.
 
 Requirements:
 
-Remove unnecessary re-renders
-Fix excessive prop drilling where it exists
-Use memoization only when justified
-Review hooks dependencies (useEffect, useMemo, useCallback)
-Improve component boundaries where needed
+Reduce unnecessary prop drilling.
+Avoid passing props that are not needed.
+Apply useMemo, useCallback, and useEffect only when they provide measurable value and improve correctness.
+Do not add memoization unnecessarily.
+Final review
 
-Avoid premature optimization.
+Perform a final pass over frontend and backend code.
 
-CLAUDE.md Improvements
+Ensure:
 
-After completing all fixes:
+consistency with CLAUDE.md
+clean architecture
+strong typing
+maintainable component structure
+no dead code
+no obvious duplication
 
-Update CLAUDE.md based on issues discovered
-Add only rules that are broadly useful and prevent real regressions
-Do not over-document or add redundant rules
-
-Final Verification:
-
-Before finishing:
-
-Frontend builds successfully
-Backend builds successfully (if modified)
-TypeScript passes
-Lint passes
-OpenAPI client generation works
-No console warnings or errors
-All existing functionality preserved
-New functionality works correctly
-Provide a summary of all changes and key tradeoffs
+Update CLAUDE.md with any newly established frontend and architecture conventions.
