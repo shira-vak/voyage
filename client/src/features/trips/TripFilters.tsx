@@ -1,5 +1,6 @@
 import { DatePicker, Select, Space } from 'antd';
 import type { Dayjs } from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import type { VehicleResponseDto } from '../../api/generated';
 
 interface TripFiltersProps {
@@ -12,6 +13,8 @@ interface TripFiltersProps {
   onEndDateChange: (date: Dayjs | null) => void;
 }
 
+const SELECT_MIN_WIDTH = 200;
+
 export default function TripFilters({
   vehicles,
   licensePlate,
@@ -21,29 +24,36 @@ export default function TripFilters({
   onStartDateChange,
   onEndDateChange,
 }: TripFiltersProps): React.ReactElement {
+  const { t } = useTranslation();
+
+  const vehicleOptions = vehicles.map((v) => ({
+    value: v.licensePlate,
+    label: `${v.name} — ${v.licensePlate}`,
+  }));
+
   return (
     <Space wrap>
       <Select
         allowClear
-        placeholder='All vehicles'
+        placeholder={t('trips.filters.allVehicles')}
         value={licensePlate}
         onChange={onLicensePlateChange}
-        style={{ minWidth: 200 }}
-        options={vehicles.map((v) => ({ value: v.licensePlate, label: `${v.name} — ${v.licensePlate}` }))}
+        style={{ minWidth: SELECT_MIN_WIDTH }}
+        options={vehicleOptions}
       />
 
       <DatePicker
         value={startDate}
         onChange={onStartDateChange}
         format='YYYY-MM-DD'
-        placeholder='From date'
+        placeholder={t('trips.filters.fromDate')}
       />
 
       <DatePicker
         value={endDate}
         onChange={onEndDateChange}
         format='YYYY-MM-DD'
-        placeholder='To date'
+        placeholder={t('trips.filters.toDate')}
       />
     </Space>
   );

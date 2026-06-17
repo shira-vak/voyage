@@ -1,0 +1,17 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--spacing-md);
+  overflow: hidden;
+}
+
+.filters {
+  flex-shrink: 0;
+}
+
+.tableWrapper {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}

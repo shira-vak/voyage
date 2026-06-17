@@ -4,6 +4,18 @@
   box-sizing: border-box;
 }
 
+:root {
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 40px;
+  --content-max-width: 1200px;
+  --drawer-width: 420px;
+  --header-z-index: 100;
+}
+
 body {
   margin: 0;
   background: #f5f5f5;

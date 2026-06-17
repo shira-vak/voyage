@@ -1,0 +1,83 @@
+{
+  "common": {
+    "appName": "Voyage"
+  },
+  "nav": {
+    "trips": "Trips",
+    "vehicles": "Vehicles"
+  },
+  "trips": {
+    "title": "Trips",
+    "recordTrip": "Record Trip",
+    "noTrips": "No trips found",
+    "totalCount": "{{count}} trips",
+    "columns": {
+      "vehicleName": "Vehicle Name",
+      "licensePlate": "License Plate",
+      "duration": "Duration",
+      "distanceKm": "Distance (km)",
+      "fuel": "Fuel / Energy",
+      "efficiency": "Efficiency",
+      "started": "Started",
+      "ended": "Ended"
+    },
+    "filters": {
+      "allVehicles": "All vehicles",
+      "fromDate": "From date",
+      "toDate": "To date"
+    },
+    "modal": {
+      "title": "Record New Trip",
+      "submit": "Record Trip",
+      "vehicle": "Vehicle",
+      "vehiclePlaceholder": "Select vehicle",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "distanceKm": "Distance (km)",
+      "fuel": "Fuel / Energy Consumed (L or kWh)",
+      "distancePlaceholder": "e.g. 145.5",
+      "fuelPlaceholder": "e.g. 18.3",
+      "validation": {
+        "vehicle": "Select a vehicle",
+        "startTime": "Select start time",
+        "endTime": "Select end time",
+        "distanceKm": "Enter distance",
+        "fuel": "Enter fuel consumed"
+      },
+      "success": "Trip recorded successfully",
+      "errorFallback": "Failed to record trip"
+    }
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "addVehicle": "Add Vehicle",
+    "noVehicles": "No vehicles yet. Add your first vehicle to get started.",
+    "viewSummaryHint": "Click to view trip summary →",
+    "added": "Added {{date}}",
+    "modal": {
+      "title": "Add Vehicle",
+      "submit": "Add Vehicle",
+      "name": "Vehicle Name",
+      "namePlaceholder": "e.g. Israel Express",
+      "licensePlate": "Licence Plate",
+      "licensePlatePlaceholder": "e.g. IL-EX-001",
+      "validation": {
+        "name": "Enter a vehicle name",
+        "licensePlate": "Enter a licence plate"
+      },
+      "success": "Vehicle \"{{name}}\" added",
+      "errorFallback": "Failed to create vehicle"
+    },
+    "summary": {
+      "defaultTitle": "Vehicle Summary",
+      "name": "Name",
+      "licencePlate": "Licence Plate",
+      "totalTrips": "Total Trips",
+      "totalDistance": "Total Distance",
+      "totalFuel": "Total Fuel / Energy",
+      "avgDuration": "Avg Trip Duration",
+      "efficiency": "Fleet Efficiency",
+      "errorFallback": "Failed to load summary"
+    }
+  }
+}

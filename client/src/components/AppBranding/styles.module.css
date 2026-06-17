@@ -1,0 +1,17 @@
+.branding {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.icon {
+  font-size: 22px;
+  color: var(--ant-color-primary);
+}
+
+.title {
+  font-size: 18px !important;
+  color: var(--ant-color-primary) !important;
+  letter-spacing: -0.3px;
+}

@@ -60,3 +60,12 @@ Changes:
 8. TypeScript clean (zero errors on `tsc --noEmit`).
 
 ---
+
+## 2026-06-17 20:20 - OpenAPI generated client + license plate vehicle selection
+
+Tool: Claude Sonnet 4.6
+
+Prompt:
+search for `Prompt 3 | Final 2nd prompt: after my edits` in chat-prompts.md.
+
+---

@@ -1,16 +1,10 @@
 import { App, DatePicker, Form, InputNumber, Modal, Select } from 'antd';
-import type { Dayjs } from 'dayjs';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { VehicleResponseDto } from '../../api/generated';
 import { TripsService } from '../../api/generated';
-
-interface FormValues {
-  licensePlate: string;
-  startedAt: Dayjs;
-  endedAt: Dayjs;
-  distanceKm: number;
-  fuelConsumed: number;
-}
+import { DATETIME_FORMAT, DECIMAL_PRECISION, MIN_POSITIVE_VALUE } from './consts';
+import type { TripFormValues } from './types';
 
 interface CreateTripModalProps {
   open: boolean;
@@ -27,9 +21,15 @@ export default function CreateTripModal({
   onClose,
   onCreated,
 }: CreateTripModalProps): React.ReactElement {
+  const { t } = useTranslation();
   const { message } = App.useApp();
-  const [form] = Form.useForm<FormValues>();
+  const [form] = Form.useForm<TripFormValues>();
   const [submitting, setSubmitting] = useState(false);
+
+  const vehicleOptions = vehicles.map((v) => ({
+    value: v.licensePlate,
+    label: `${v.name} — ${v.licensePlate}`,
+  }));
 
   const handleSubmit = async (): Promise<void> => {
     const values = await form.validateFields();
@@ -44,11 +44,11 @@ export default function CreateTripModal({
           fuelConsumed: values.fuelConsumed,
         },
       });
-      void message.success('Trip recorded successfully');
+      void message.success(t('trips.modal.success'));
       form.resetFields();
       onCreated();
     } catch (err) {
-      void message.error(err instanceof Error ? err.message : 'Failed to record trip');
+      void message.error(err instanceof Error ? err.message : t('trips.modal.errorFallback'));
     } finally {
       setSubmitting(false);
     }
@@ -61,11 +61,11 @@ export default function CreateTripModal({
 
   return (
     <Modal
-      title='Record New Trip'
+      title={t('trips.modal.title')}
       open={open}
       onOk={handleSubmit}
       onCancel={handleClose}
-      okText='Record Trip'
+      okText={t('trips.modal.submit')}
       confirmLoading={submitting}
       destroyOnClose
     >
@@ -75,43 +75,54 @@ export default function CreateTripModal({
         style={{ marginTop: 16 }}
         initialValues={{ licensePlate: preselectedLicensePlate }}
       >
-        <Form.Item name='licensePlate' label='Vehicle' rules={[{ required: true, message: 'Select a vehicle' }]}>
-          <Select
-            placeholder='Select vehicle'
-            options={vehicles.map((v) => ({ value: v.licensePlate, label: `${v.name} — ${v.licensePlate}` }))}
-          />
+        <Form.Item
+          name='licensePlate'
+          label={t('trips.modal.vehicle')}
+          rules={[{ required: true, message: t('trips.modal.validation.vehicle') }]}
+        >
+          <Select placeholder={t('trips.modal.vehiclePlaceholder')} options={vehicleOptions} />
         </Form.Item>
 
         <Form.Item
           name='startedAt'
-          label='Start Time'
-          rules={[{ required: true, message: 'Select start time' }]}
+          label={t('trips.modal.startTime')}
+          rules={[{ required: true, message: t('trips.modal.validation.startTime') }]}
         >
-          <DatePicker showTime format='YYYY-MM-DD HH:mm' style={{ width: '100%' }} />
+          <DatePicker showTime format={DATETIME_FORMAT} style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item
           name='endedAt'
-          label='End Time'
-          rules={[{ required: true, message: 'Select end time' }]}
+          label={t('trips.modal.endTime')}
+          rules={[{ required: true, message: t('trips.modal.validation.endTime') }]}
         >
-          <DatePicker showTime format='YYYY-MM-DD HH:mm' style={{ width: '100%' }} />
+          <DatePicker showTime format={DATETIME_FORMAT} style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item
           name='distanceKm'
-          label='Distance (km)'
-          rules={[{ required: true, message: 'Enter distance' }]}
+          label={t('trips.modal.distanceKm')}
+          rules={[{ required: true, message: t('trips.modal.validation.distanceKm') }]}
         >
-          <InputNumber min={0.01} precision={2} style={{ width: '100%' }} placeholder='e.g. 145.5' />
+          <InputNumber
+            min={MIN_POSITIVE_VALUE}
+            precision={DECIMAL_PRECISION}
+            style={{ width: '100%' }}
+            placeholder={t('trips.modal.distancePlaceholder')}
+          />
         </Form.Item>
 
         <Form.Item
           name='fuelConsumed'
-          label='Fuel / Energy Consumed (L or kWh)'
-          rules={[{ required: true, message: 'Enter fuel consumed' }]}
+          label={t('trips.modal.fuel')}
+          rules={[{ required: true, message: t('trips.modal.validation.fuel') }]}
         >
-          <InputNumber min={0.01} precision={2} style={{ width: '100%' }} placeholder='e.g. 18.3' />
+          <InputNumber
+            min={MIN_POSITIVE_VALUE}
+            precision={DECIMAL_PRECISION}
+            style={{ width: '100%' }}
+            placeholder={t('trips.modal.fuelPlaceholder')}
+          />
         </Form.Item>
       </Form>
     </Modal>

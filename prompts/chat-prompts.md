@@ -496,6 +496,102 @@ Verify that all interactions continue to work correctly after implementation. An
 
 
 ##### Prompt 3 | Final 3rd prompt: after my edits
+Read the assignment and CLAUDE.md before making any changes.
+
+The current application works well. This pass is focused on maintainability, architecture consistency, and frontend code quality.
+
+Important:
+
+* Do not redesign the UI.
+* Do not introduce unnecessary abstractions.
+* Improve structure only where it provides clear value.
+* Prefer incremental cleanup over large rewrites.
+
+Required changes:
+
+2. CSS organization
+
+Requirements:
+
+* Remove component styling from TSX files.
+* Use CSS Modules.
+* Keep styles in dedicated styles.module.css files.
+* Extract reusable colors and shared values into CSS variables.
+* Components must use className only (use the classnames package for cleaner usage)
+* try not to use alignment by pixels (e.g top: 20 ...) to prevent different style when in smaller screens or mobile view - in general prefer flex alignment over hardcoded numbers
+
+3. Internationalization
+
+Prepare the application for i18n.
+
+Requirements:
+
+* Add an i18n framework.
+* English only for now.
+* User-facing text should come from translation resources rather than hardcoded strings.
+
+4. Component structure
+
+Improve component separation.
+
+Requirements:
+
+* Each component should have a clear responsibility.
+* Extract reusable UI pieces into dedicated components.
+* Example: branding/logo/application title should not live directly inside layout implementation.
+* Avoid large multi-purpose components.
+
+5. Types and constants
+
+Requirements:
+
+* Move shared types into types.ts files.
+* Move constants into consts.ts files.
+* Place files at the nearest common ownership level.
+* Avoid duplicated definitions.
+
+6. Eliminate magic values
+
+Review the codebase and remove unnecessary hardcoded:
+
+* strings
+* numbers
+* configuration values
+* labels
+
+Place them in the appropriate location if it can be:
+
+* i18n resources
+* constants
+* backend defaults
+* CSS variables
+* shared configuration
+
+7. Rendering performance
+
+Review component rendering behavior.
+
+Requirements:
+
+* Reduce unnecessary prop drilling.
+* Avoid passing props that are not needed.
+* Apply useMemo, useCallback, and useEffect only when they provide measurable value and improve correctness.
+* Do not add memoization unnecessarily.
+
+8. Final review
+
+Perform a final pass over frontend and backend code.
+
+Ensure:
+
+* consistency with CLAUDE.md
+* clean architecture
+* strong typing
+* maintainable component structure
+* no dead code
+* no obvious duplication
+
+Update CLAUDE.md with any newly established frontend and architecture conventions.
 
 ----
 

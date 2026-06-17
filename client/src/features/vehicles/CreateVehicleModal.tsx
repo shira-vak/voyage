@@ -1,11 +1,8 @@
 import { App, Form, Input, Modal } from 'antd';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { VehiclesService } from '../../api/generated';
-
-interface FormValues {
-  name: string;
-  licensePlate: string;
-}
+import type { VehicleFormValues } from './types';
 
 interface CreateVehicleModalProps {
   open: boolean;
@@ -18,20 +15,21 @@ export default function CreateVehicleModal({
   onClose,
   onCreated,
 }: CreateVehicleModalProps): React.ReactElement {
+  const { t } = useTranslation();
   const { message } = App.useApp();
-  const [form] = Form.useForm<FormValues>();
+  const [form] = Form.useForm<VehicleFormValues>();
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (): Promise<void> => {
     const values = await form.validateFields();
     setSubmitting(true);
     try {
-      await VehiclesService.vehiclesControllerCreateVehicle(values);
-      void message.success(`Vehicle "${values.name}" added`);
+      await VehiclesService.vehiclesControllerCreateVehicle({ requestBody: values });
+      void message.success(t('vehicles.modal.success', { name: values.name }));
       form.resetFields();
       onCreated();
     } catch (err) {
-      void message.error(err instanceof Error ? err.message : 'Failed to create vehicle');
+      void message.error(err instanceof Error ? err.message : t('vehicles.modal.errorFallback'));
     } finally {
       setSubmitting(false);
     }
@@ -44,29 +42,29 @@ export default function CreateVehicleModal({
 
   return (
     <Modal
-      title='Add Vehicle'
+      title={t('vehicles.modal.title')}
       open={open}
       onOk={handleSubmit}
       onCancel={handleClose}
-      okText='Add Vehicle'
+      okText={t('vehicles.modal.submit')}
       confirmLoading={submitting}
       destroyOnClose
     >
       <Form form={form} layout='vertical' style={{ marginTop: 16 }}>
         <Form.Item
           name='name'
-          label='Vehicle Name'
-          rules={[{ required: true, message: 'Enter a vehicle name' }]}
+          label={t('vehicles.modal.name')}
+          rules={[{ required: true, message: t('vehicles.modal.validation.name') }]}
         >
-          <Input placeholder='e.g. Israel Express' />
+          <Input placeholder={t('vehicles.modal.namePlaceholder')} />
         </Form.Item>
 
         <Form.Item
           name='licensePlate'
-          label='Licence Plate'
-          rules={[{ required: true, message: 'Enter a licence plate' }]}
+          label={t('vehicles.modal.licensePlate')}
+          rules={[{ required: true, message: t('vehicles.modal.validation.licensePlate') }]}
         >
-          <Input placeholder='e.g. IL-EX-001' />
+          <Input placeholder={t('vehicles.modal.licensePlatePlaceholder')} />
         </Form.Item>
       </Form>
     </Modal>
