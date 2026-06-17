@@ -30,12 +30,12 @@ describe('TripsController', () => {
   beforeEach(() => jest.clearAllMocks());
   afterAll(() => app.close());
 
-  describe('POST /vehicles/:licensePlate/trip', () => {
+  describe('POST /trips/:licensePlate', () => {
     it('when data is valid should return 201 with the created trip', async () => {
       serviceMock.createTrip.mockResolvedValue(MOCK_TRIP_RESPONSE);
 
       const res = await request(app.getHttpServer())
-        .post(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}/trip`)
+        .post(`/trips/${MOCK_VEHICLE_LICENSE_PLATE}`)
         .send(MOCK_CREATE_TRIP_DTO)
         .expect(201);
 
@@ -47,7 +47,7 @@ describe('TripsController', () => {
       serviceMock.createTrip.mockRejectedValue(new NotFoundException());
 
       await request(app.getHttpServer())
-        .post(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}/trip`)
+        .post(`/trips/${MOCK_VEHICLE_LICENSE_PLATE}`)
         .send(MOCK_CREATE_TRIP_DTO)
         .expect(404);
     });
@@ -74,7 +74,7 @@ describe('TripsController', () => {
       ['startedAt is not a date string', { ...MOCK_CREATE_TRIP_DTO, startedAt: 'not-a-date' }],
       ['an unknown field is sent', { ...MOCK_CREATE_TRIP_DTO, extra: 'x' }],
     ])('when %s should return 400', async (_label, body) => {
-      await request(app.getHttpServer()).post(`/vehicles/${MOCK_VEHICLE_LICENSE_PLATE}/trip`).send(body).expect(400);
+      await request(app.getHttpServer()).post(`/trips/${MOCK_VEHICLE_LICENSE_PLATE}`).send(body).expect(400);
     });
   });
 

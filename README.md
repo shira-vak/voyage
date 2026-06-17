@@ -1,4 +1,4 @@
-# Voyage Fleet
+# Voyage
 
 A full-stack fleet management application for recording and analysing vehicle trips.
 
@@ -25,12 +25,12 @@ A full-stack fleet management application for recording and analysing vehicle tr
 
 Make sure the following are installed before you begin:
 
-| Tool | Minimum Version | Notes |
-|------|----------------|-------|
-| Node.js | 20+ | [nodejs.org](https://nodejs.org) |
-| npm | 10+ | Comes with Node.js |
-| Docker | 24+ | [docker.com](https://www.docker.com) |
-| Docker Compose | v2 | Bundled with Docker Desktop |
+| Tool           | Minimum Version | Notes                                |
+| -------------- | --------------- | ------------------------------------ |
+| Node.js        | 20+             | [nodejs.org](https://nodejs.org)     |
+| npm            | 10+             | Comes with Node.js                   |
+| Docker         | 24+             | [docker.com](https://www.docker.com) |
+| Docker Compose | v2              | Bundled with Docker Desktop          |
 
 Verify your setup:
 
@@ -168,16 +168,17 @@ All backend environment variables live in `server/.env`. Copy from the template:
 cp server/.env.example server/.env
 ```
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `POSTGRES_USER` | `voyage` | PostgreSQL username |
-| `POSTGRES_PASSWORD` | `voyage_password` | PostgreSQL password |
-| `POSTGRES_DB` | `voyage_db` | PostgreSQL database name |
-| `POSTGRES_PORT` | `5432` | Host port Docker maps to the container's 5432 |
-| `DATABASE_URL` | *(derived)* | Full Prisma connection string — built from the variables above |
-| `PORT` | `3000` | Port the NestJS server listens on |
+| Variable            | Default           | Description                                                    |
+| ------------------- | ----------------- | -------------------------------------------------------------- |
+| `POSTGRES_USER`     | `voyage`          | PostgreSQL username                                            |
+| `POSTGRES_PASSWORD` | `voyage_password` | PostgreSQL password                                            |
+| `POSTGRES_DB`       | `voyage_db`       | PostgreSQL database name                                       |
+| `POSTGRES_PORT`     | `5432`            | Host port Docker maps to the container's 5432                  |
+| `DATABASE_URL`      | _(derived)_       | Full Prisma connection string — built from the variables above |
+| `PORT`              | `3000`            | Port the NestJS server listens on                              |
 
 > **Note:** `DATABASE_URL` is constructed from the other variables using shell interpolation in `.env.example`. If your shell doesn't expand variables in `.env` files, set the full string directly:
+>
 > ```
 > DATABASE_URL="postgresql://voyage:voyage_password@localhost:5432/voyage_db"
 > ```
@@ -237,6 +238,7 @@ npm run db:seed
 ```
 
 Creates:
+
 - **5 vehicles:** Berlin Express, Hamburg Van, Munich Sedan, Cologne Bus, Stuttgart Cargo
 - **14 trips:** Spanning March–June 2024 with realistic distance and fuel data
 
@@ -270,14 +272,14 @@ npm run start:prod
 
 ### API Endpoints
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/vehicles` | List all vehicles |
-| `POST` | `/vehicles` | Create a vehicle |
-| `GET` | `/vehicles/:licensePlate` | Get a vehicle by license plate |
-| `GET` | `/vehicles/:licensePlate/summary` | Aggregated trip stats for a vehicle |
-| `POST` | `/vehicles/:licensePlate/trip` | Record a new trip for a vehicle |
-| `GET` | `/trips` | List trips (filterable by license plate and date range, paginated) |
+| Method | Path                              | Description                                                        |
+| ------ | --------------------------------- | ------------------------------------------------------------------ |
+| `GET`  | `/vehicles`                       | List all vehicles                                                  |
+| `POST` | `/vehicles`                       | Create a vehicle                                                   |
+| `GET`  | `/vehicles/:licensePlate`         | Get a vehicle by license plate                                     |
+| `GET`  | `/vehicles/:licensePlate/summary` | Aggregated trip stats for a vehicle                                |
+| `POST` | `/trips/:licensePlate`    | Record a new trip for a vehicle                                    |
+| `GET`  | `/trips`                          | List trips (filterable by license plate and date range, paginated) |
 
 ---
 
@@ -314,7 +316,7 @@ cd client
 npm run api:generate
 ```
 
-This fetches the spec from `http://localhost:3000/api-json`, overwrites `src/api/openapi.json`, and regenerates `src/api/generated/`. Commit both files together.
+This reads `PORT` from `server/.env`, fetches the spec from `http://localhost:{PORT}/api-json`, overwrites `src/api/openapi.json`, and regenerates `src/api/generated/`. Commit both files together.
 
 ---
 
@@ -383,38 +385,38 @@ server/src/
 
 ### Backend
 
-| Command | Description |
-|---------|-------------|
-| `npm run start:dev` | Start API with hot reload |
-| `npm run build` | Compile TypeScript |
-| `npm run start:prod` | Start compiled production build |
-| `npm run db:migrate` | Apply pending migrations |
+| Command                     | Description                                    |
+| --------------------------- | ---------------------------------------------- |
+| `npm run start:dev`         | Start API with hot reload                      |
+| `npm run build`             | Compile TypeScript                             |
+| `npm run start:prod`        | Start compiled production build                |
+| `npm run db:migrate`        | Apply pending migrations                       |
 | `npm run db:migrate:deploy` | Apply migrations (production, non-interactive) |
-| `npm run db:reset` | Drop DB, re-migrate, re-seed |
-| `npm run db:seed` | Insert sample data |
-| `npm run db:studio` | Open Prisma Studio |
-| `npm run db:generate` | Regenerate Prisma client after schema changes |
-| `npm test` | Run all tests |
-| `npm run test:cov` | Run tests with coverage |
-| `npm run lint` | Lint and auto-fix |
-| `npm run format` | Format with Prettier |
+| `npm run db:reset`          | Drop DB, re-migrate, re-seed                   |
+| `npm run db:seed`           | Insert sample data                             |
+| `npm run db:studio`         | Open Prisma Studio                             |
+| `npm run db:generate`       | Regenerate Prisma client after schema changes  |
+| `npm test`                  | Run all tests                                  |
+| `npm run test:cov`          | Run tests with coverage                        |
+| `npm run lint`              | Lint and auto-fix                              |
+| `npm run format`            | Format with Prettier                           |
 
 ### Frontend
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Vite dev server |
-| `npm run build` | Production build |
+| Command                | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `npm run dev`          | Start Vite dev server                      |
+| `npm run build`        | Production build                           |
 | `npm run api:generate` | Regenerate typed API client from live spec |
-| `npm run lint` | Lint source files |
+| `npm run lint`         | Lint source files                          |
 
 ### Docker
 
-| Command | Description |
-|---------|-------------|
-| `docker compose up -d` | Start PostgreSQL in the background |
-| `docker compose stop` | Stop the container (data preserved) |
-| `docker compose down` | Stop and remove the container (data preserved in volume) |
-| `docker compose down -v` | Stop and remove the container **and** delete all data |
-| `docker compose ps` | Check container status and health |
-| `docker compose logs postgres` | View PostgreSQL logs |
+| Command                        | Description                                              |
+| ------------------------------ | -------------------------------------------------------- |
+| `docker compose up -d`         | Start PostgreSQL in the background                       |
+| `docker compose stop`          | Stop the container (data preserved)                      |
+| `docker compose down`          | Stop and remove the container (data preserved in volume) |
+| `docker compose down -v`       | Stop and remove the container **and** delete all data    |
+| `docker compose ps`            | Check container status and health                        |
+| `docker compose logs postgres` | View PostgreSQL logs                                     |

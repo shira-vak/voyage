@@ -26,7 +26,7 @@ export class TripsService {
     }): CancelablePromise<TripResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/vehicles/{licensePlate}/trip',
+            url: '/trips/{licensePlate}',
             path: {
                 'licensePlate': licensePlate,
             },

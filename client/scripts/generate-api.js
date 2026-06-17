@@ -3,8 +3,12 @@ import fs from "fs/promises";
 import path from "path";
 import os from "os";
 import { generate } from "openapi-typescript-codegen";
+import dotenv from "dotenv";
 
-const SPEC_URL = "http://localhost:3000/api-json";
+const serverEnvPath = path.resolve("../server/.env");
+const { parsed: serverEnv } = dotenv.config({ path: serverEnvPath });
+const port = serverEnv?.PORT ?? "3000";
+const SPEC_URL = `http://localhost:${port}/api-json`;
 const DEST = path.resolve("src/api/generated");
 const TMP = path.join(os.tmpdir(), `openapi-${Date.now()}.json`);
 

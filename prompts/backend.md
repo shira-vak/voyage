@@ -104,3 +104,20 @@ Changes:
 8. All 48 tests pass.
 
 ---
+
+## 2026-06-18 00:40 - Change trip endpoint url and update all project accordingly.
+
+Tool: Claude Sonnet 4.6
+
+Prompt:
+/vehicles/:licensePlate/trip change this endpoint to be  /trips/:licensePlate/
+so in the contrller instead of this: 'vehicles/:licensePlate/trip' it will be: 'trips/:licensePlate/'- make sure all the tests and front generated and code are updated accordingly and run successfully all across the app 
+
+Result:
+Everything is updated and verified. Here's what changed:
+
+trips.controller.ts — route changed from 'vehicles/:licensePlate/trip' to 'trips/:licensePlate'
+trips.controller.spec.ts — describe label and all 3 .post(...) calls updated to /trips/${MOCK_VEHICLE_LICENSE_PLATE}
+src/api/generated/ — regenerated from the live spec; TripsService.ts now points to /trips/{licensePlate}
+src/api/openapi.json — updated as the committed spec source of truth
+All 46 backend tests pass.
