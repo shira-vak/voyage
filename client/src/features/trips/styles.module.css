@@ -1,0 +1,11 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--spacing-md);
+  overflow: hidden;
+}
+
+.filters {
+  flex-shrink: 0;
+}

@@ -1,0 +1,43 @@
+import { useCallback, useEffect, useState } from "react";
+import type { PaginatedTripsDto } from "../../../api/generated";
+import { TripsService } from "../../../api/generated";
+import { extractErrorMessage } from "../../utils";
+import type { TripsQuery } from "../types";
+
+interface UseTripsResult {
+  result: PaginatedTripsDto | null;
+  loading: boolean;
+  error: string | null;
+  reload: () => void;
+}
+
+export function useTrips(query: TripsQuery): UseTripsResult {
+  const [result, setResult] = useState<PaginatedTripsDto | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await TripsService.tripsControllerListTrips({
+        licensePlate: query.licensePlate,
+        startDate: query.startDate,
+        endDate: query.endDate,
+        page: query.page,
+        limit: query.limit,
+      });
+      setResult(data);
+    } catch (err) {
+      setError(extractErrorMessage(err, "Failed to load trips"));
+    } finally {
+      setLoading(false);
+    }
+  }, [JSON.stringify(query)]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  return { result, loading, error, reload: load };
+}
