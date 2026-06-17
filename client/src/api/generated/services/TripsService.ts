@@ -11,15 +11,19 @@ import { request as __request } from '../core/request';
 export class TripsService {
     /**
      * Record a new trip for a vehicle
-     * @param licensePlate Vehicle license plate
-     * @param requestBody
      * @returns TripResponseDto
      * @throws ApiError
      */
-    public static tripsControllerCreateTrip(
+    public static tripsControllerCreateTrip({
+        licensePlate,
+        requestBody,
+    }: {
+        /**
+         * Vehicle license plate
+         */
         licensePlate: string,
         requestBody: CreateTripDto,
-    ): CancelablePromise<TripResponseDto> {
+    }): CancelablePromise<TripResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/vehicles/{licensePlate}/trip',
@@ -32,21 +36,37 @@ export class TripsService {
     }
     /**
      * List trips with optional filters and pagination
-     * @param licensePlate Filter by vehicle license plate
-     * @param startDate Return trips starting on or after this date (ISO 8601)
-     * @param endDate Return trips starting on or before this date (ISO 8601)
-     * @param page Page number (default: 1)
-     * @param limit Items per page, max 100 (default: 20)
      * @returns PaginatedTripsDto
      * @throws ApiError
      */
-    public static tripsControllerListTrips(
+    public static tripsControllerListTrips({
+        licensePlate,
+        startDate,
+        endDate,
+        page,
+        limit,
+    }: {
+        /**
+         * Filter by vehicle license plate
+         */
         licensePlate?: string,
+        /**
+         * Return trips starting on or after this date (ISO 8601)
+         */
         startDate?: string,
+        /**
+         * Return trips starting on or before this date (ISO 8601)
+         */
         endDate?: string,
+        /**
+         * Page number (default: 1)
+         */
         page?: number,
+        /**
+         * Items per page, max 100 (default: 20)
+         */
         limit?: number,
-    ): CancelablePromise<PaginatedTripsDto> {
+    }): CancelablePromise<PaginatedTripsDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/trips',

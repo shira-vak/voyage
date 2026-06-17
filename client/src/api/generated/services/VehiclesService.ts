@@ -11,13 +11,14 @@ import { request as __request } from '../core/request';
 export class VehiclesService {
     /**
      * Create a new vehicle
-     * @param requestBody
      * @returns VehicleResponseDto
      * @throws ApiError
      */
-    public static vehiclesControllerCreateVehicle(
+    public static vehiclesControllerCreateVehicle({
+        requestBody,
+    }: {
         requestBody: CreateVehicleDto,
-    ): CancelablePromise<VehicleResponseDto> {
+    }): CancelablePromise<VehicleResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/vehicles',
@@ -38,13 +39,17 @@ export class VehiclesService {
     }
     /**
      * Get a vehicle by license plate
-     * @param licensePlate Vehicle license plate
      * @returns VehicleResponseDto
      * @throws ApiError
      */
-    public static vehiclesControllerGetVehicleByLicensePlate(
+    public static vehiclesControllerGetVehicleByLicensePlate({
+        licensePlate,
+    }: {
+        /**
+         * Vehicle license plate
+         */
         licensePlate: string,
-    ): CancelablePromise<VehicleResponseDto> {
+    }): CancelablePromise<VehicleResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/vehicles/{licensePlate}',
@@ -55,13 +60,17 @@ export class VehiclesService {
     }
     /**
      * Get aggregated trip summary for a vehicle
-     * @param licensePlate Vehicle license plate
      * @returns VehicleSummaryDto
      * @throws ApiError
      */
-    public static vehiclesControllerGetVehicleSummary(
+    public static vehiclesControllerGetVehicleSummary({
+        licensePlate,
+    }: {
+        /**
+         * Vehicle license plate
+         */
         licensePlate: string,
-    ): CancelablePromise<VehicleSummaryDto> {
+    }): CancelablePromise<VehicleSummaryDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/vehicles/{licensePlate}/summary',
